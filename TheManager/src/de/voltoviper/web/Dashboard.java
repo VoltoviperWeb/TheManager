@@ -1,6 +1,5 @@
 package de.voltoviper.web;
 
-import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.vaadin.ui.Alignment;

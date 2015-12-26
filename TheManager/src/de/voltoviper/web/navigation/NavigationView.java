@@ -9,6 +9,7 @@ import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
 
 import de.voltoviper.web.Dashboard;
+import de.voltoviper.web.device.NeuesDeviceView;
 import de.voltoviper.web.person.KundeUebersicht;
 import de.voltoviper.web.person.NeuerKundeView;
 
@@ -25,12 +26,13 @@ public class NavigationView extends VerticalLayout {
 
 	private void init(BorderLayout layout) {
 
-		setWidth("220");
+		setWidth("230");
 
 		final Object[][] planets = new Object[][] { 
 			new String[] { "Dashboard" },
 			new String[] { "Kunden", "Kundenübersicht", "Neuer Kunde", "Kunde bearbeiten" },
-			new String[] { "Ticket", "Ticket Übersicht", "Neues Ticket"}
+			new String[] { "Ticket", "Ticket Übersicht", "Neues Ticket"},
+			new String[] { "Geräte", "Geräteübersicht", "Neues Gerät"}
 		};
 			
 			
@@ -76,6 +78,10 @@ public class NavigationView extends VerticalLayout {
 				case "Kundenübersicht":
 					layout.removeComponent(Constraint.CENTER);
 					layout.addComponent(new KundeUebersicht(), Constraint.CENTER);
+					break;
+				case "Neues Gerät":
+					layout.removeComponent(Constraint.CENTER);
+					layout.addComponent(new NeuesDeviceView(), Constraint.CENTER);
 					break;
 				default:
 					layout.removeComponent(Constraint.CENTER);
