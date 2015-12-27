@@ -1,12 +1,10 @@
 package de.voltoviper.web.person;
 
-import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.data.validator.NullValidator;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
@@ -65,7 +63,6 @@ public class NeuerKundeView extends FormLayout {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				System.out.println("Neuer Kunde " + tf2.getValue() + " wurde angelegt");
 				Kunde kunde = new Kunde(tf1.getValue(), tf2.getValue(), email.getValue(), telefon.getValue(), login.getValue());
 			}
 		});

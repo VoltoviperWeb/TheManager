@@ -1,21 +1,31 @@
 package de.voltoviper.objects.benutzer;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.TextField;
-
+import de.voltoviper.objects.device.Device;
 import de.voltoviper.web.DBManager;
 
 @Entity
 @DiscriminatorValue("Kunde")
-public class Kunde extends Benutzer {
+public class Kunde extends Benutzer implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	String email, telefon;
 	Boolean login;
+	
+	@OneToMany(mappedBy="besitzer")
+	Collection<Device> devices = new ArrayList<>();
 	
 	public Kunde(){
 		
@@ -31,7 +41,6 @@ public class Kunde extends Benutzer {
 	}
 
 	private void savekunde(Kunde kunde) {
-		// TODO Auto-generated method stub
 		Session s = DBManager.getFactory().openSession();
 
 		Transaction tx = null;
@@ -39,7 +48,6 @@ public class Kunde extends Benutzer {
 			tx = s.beginTransaction();
 			s.save(kunde);
 			tx.commit();
-			System.out.println("Kunde "+lastname+" wurde in die Datenbank eingetragen");
 		} catch (Exception e) {
 			if (tx != null)
 				tx.rollback();

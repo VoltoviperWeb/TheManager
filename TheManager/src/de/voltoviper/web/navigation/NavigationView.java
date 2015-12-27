@@ -5,22 +5,28 @@ import org.vaadin.addon.borderlayout.BorderLayout.Constraint;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.ui.AbstractLayout;
+import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
 
 import de.voltoviper.web.Dashboard;
 import de.voltoviper.web.device.NeuesDeviceView;
+import de.voltoviper.web.konfiguration.HerstellerUebersichtView;
 import de.voltoviper.web.person.KundeUebersicht;
 import de.voltoviper.web.person.NeuerKundeView;
 
 public class NavigationView extends VerticalLayout {
-
+	BorderLayout layout;
+	NavigationView navigation;
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
 	public NavigationView(BorderLayout layout) {
+		this.layout=layout;
+		this.navigation = this;
 		init(layout);
 	}
 
@@ -32,7 +38,8 @@ public class NavigationView extends VerticalLayout {
 			new String[] { "Dashboard" },
 			new String[] { "Kunden", "Kundenübersicht", "Neuer Kunde", "Kunde bearbeiten" },
 			new String[] { "Ticket", "Ticket Übersicht", "Neues Ticket"},
-			new String[] { "Geräte", "Geräteübersicht", "Neues Gerät"}
+			new String[] { "Geräte", "Geräteübersicht", "Neues Gerät"},
+			new String[] { "Konfiguration","Hersteller"}
 		};
 			
 			
@@ -47,11 +54,8 @@ public class NavigationView extends VerticalLayout {
 			} else {
 				for (int j = 1; j < planets[i].length; j++) {
 					String subitem = (String) planets[i][j];
-
 					tree.addItem(subitem);
-
 					tree.setParent(subitem, item);
-
 					tree.setChildrenAllowed(subitem, false);
 				}
 
@@ -72,23 +76,27 @@ public class NavigationView extends VerticalLayout {
 				if(id!=null){
 				switch(id){
 				case "Neuer Kunde":
-					layout.removeComponent(Constraint.CENTER);
+					resetView();
 					layout.addComponent(new NeuerKundeView(), Constraint.CENTER);
 					break;
 				case "Kundenübersicht":
-					layout.removeComponent(Constraint.CENTER);
+					resetView();
 					layout.addComponent(new KundeUebersicht(), Constraint.CENTER);
 					break;
 				case "Neues Gerät":
-					layout.removeComponent(Constraint.CENTER);
-					layout.addComponent(new NeuesDeviceView(), Constraint.CENTER);
+					resetView();
+					layout.addComponent(new NeuesDeviceView(layout), Constraint.CENTER);
+					break;
+				case "Hersteller":
+					resetView();
+					layout.addComponent(new HerstellerUebersichtView(navigation), Constraint.CENTER);
 					break;
 				default:
-					layout.removeComponent(Constraint.CENTER);
+					resetView();
 					layout.addComponent(new Dashboard(), Constraint.CENTER);
 				}
 				}else{
-					layout.removeComponent(Constraint.CENTER);
+					resetView();
 					layout.addComponent(new Dashboard(), Constraint.CENTER);
 				}
 				
@@ -96,6 +104,16 @@ public class NavigationView extends VerticalLayout {
 		});
 		addComponent(tree);
 
+	}
+	
+	private void resetView(){
+		layout.removeComponent(Constraint.CENTER);
+		layout.removeComponent(Constraint.EAST);
+	}
+	
+	public void setView(AbstractLayout inside_layout){
+		resetView();
+		layout.addComponent(inside_layout, Constraint.CENTER);
 	}
 
 }
