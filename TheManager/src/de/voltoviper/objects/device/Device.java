@@ -13,6 +13,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import de.voltoviper.objects.benutzer.Kunde;
+import de.voltoviper.objects.standards.Device_Status;
 import de.voltoviper.objects.standards.Device_Typ;
 import de.voltoviper.objects.standards.Hersteller;
 import de.voltoviper.web.DBManager;
@@ -37,6 +38,8 @@ public class Device implements Serializable{
 	@ManyToOne
 	Hersteller hersteller;
 	
+	Device_Status status;
+	
 	
 	public Device(){
 		
@@ -46,11 +49,11 @@ public class Device implements Serializable{
 		this.typ = typ;
 		this.besitzer=besitzer;
 		this.hersteller = hersteller;
+		this.status = Device_Status.OK;
 		saveDevice(this);
 	}
 
 	private void saveDevice(Device device) {
-		// TODO Auto-generated method stub
 		Session s = DBManager.getFactory().openSession();
 
 		Transaction tx = null;
@@ -66,4 +69,54 @@ public class Device implements Serializable{
 			s.close();
 		}
 	}
+
+	public int getDevice_id() {
+		return device_id;
+	}
+
+	public void setDevice_id(int device_id) {
+		this.device_id = device_id;
+	}
+
+	public String getBezeichnung() {
+		return bezeichnung;
+	}
+
+	public void setBezeichnung(String bezeichnung) {
+		this.bezeichnung = bezeichnung;
+	}
+
+	public Device_Typ getTyp() {
+		return typ;
+	}
+
+	public void setTyp(Device_Typ typ) {
+		this.typ = typ;
+	}
+
+	public Kunde getBesitzer() {
+		return besitzer;
+	}
+
+	public void setBesitzer(Kunde besitzer) {
+		this.besitzer = besitzer;
+	}
+
+	public Hersteller getHersteller() {
+		return hersteller;
+	}
+
+	public void setHersteller(Hersteller hersteller) {
+		this.hersteller = hersteller;
+	}
+
+	public Device_Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Device_Status status) {
+		this.status = status;
+	}
+	
+
 }
