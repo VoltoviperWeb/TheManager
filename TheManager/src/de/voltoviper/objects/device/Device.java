@@ -1,12 +1,15 @@
 package de.voltoviper.objects.device;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.Session;
@@ -39,20 +42,32 @@ public class Device implements Serializable{
 	Hersteller hersteller;
 	
 	Device_Status status;
-	
+	@OneToMany(mappedBy="deviceA")
+	Collection<Connection> connections = new ArrayList<>();
 	
 	public Device(){
 		
 	}
 	
-	public Device(Device_Typ typ, Kunde besitzer, Hersteller hersteller){
+	public Device(Device_Typ typ, Kunde besitzer, Hersteller hersteller, int lan, int wlan){
 		this.typ = typ;
 		this.besitzer=besitzer;
 		this.hersteller = hersteller;
 		this.status = Device_Status.OK;
+	
+		for(int i=0;i<lan;i++){
+			connections.add(new LAN(this));
+		}
+		for(int i=0;i<wlan;i++){
+			connections.add(new WLAN(this));
+		}
+		
 		saveDevice(this);
 	}
-
+/**
+ * Speichert das Übergebene Objekt in der Datenbank.
+ * @param device Objekt vom Typ Device, dass in der Datenbank gespeichert werden soll.
+ */
 	private void saveDevice(Device device) {
 		Session s = DBManager.getFactory().openSession();
 
@@ -69,6 +84,32 @@ public class Device implements Serializable{
 			s.close();
 		}
 	}
+	
+	public boolean unconnected(Connection conn) throws Exception {
+		
+		
+		ArrayList<Connection> speicher = new ArrayList<>();
+		for(Connection c: connections){
+			speicher.add(c);
+		}
+		for(Connection c: speicher){
+			if(c.getClass().equals(conn.getClass())){
+				if(!c.connected()){
+					connections.remove(c);
+					connections.add(conn);
+					return true;
+				}
+			}
+		}
+		throw new Exception("No unnocented Interface");
+		
+	}
+	
+	
+	
+	/*
+	 * Getter and Setter
+	 */
 
 	public int getDevice_id() {
 		return device_id;

@@ -15,6 +15,9 @@
 		<mapping class="de.voltoviper.objects.benutzer.Benutzer" />
 		<mapping class="de.voltoviper.objects.benutzer.Kunde" />
 		<mapping class="de.voltoviper.objects.device.Device" />
+		<mapping class="de.voltoviper.objects.device.Connection" />
+		<mapping class="de.voltoviper.objects.device.LAN" />
+		<mapping class="de.voltoviper.objects.device.WLAN" />
 		<mapping class="de.voltoviper.objects.standards.Hersteller" />
 	</session-factory>
 </hibernate-configuration>
