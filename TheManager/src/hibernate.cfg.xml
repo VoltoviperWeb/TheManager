@@ -10,7 +10,7 @@
 		<property name="hibernate.connection.username">TheManager</property>
 		<property name="hibernate.default_schema">TheManager</property>
 		
-		<property name="hibernate.hbm2ddl.auto">update</property>
+		<property name="hibernate.hbm2ddl.auto">create-drop</property>
 		
 		<mapping class="de.voltoviper.objects.benutzer.Benutzer" />
 		<mapping class="de.voltoviper.objects.benutzer.Kunde" />

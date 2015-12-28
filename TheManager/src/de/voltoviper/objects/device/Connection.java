@@ -5,9 +5,11 @@ import java.util.Collection;
 
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -18,17 +20,15 @@ import javax.persistence.Table;
 public abstract class Connection {
 	@Id
 	@GeneratedValue
-	int id;
-	@ManyToOne
-	Device deviceA;
-	Device deviceB;
+	int conn_id;
 	
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "connections")
 	Collection<Device> devices = new ArrayList<>();
 
 	public boolean connected() {
-		if (deviceA != null && deviceB != null) {
+		if(devices.size()==2){
 			return true;
-		} else {
+		}else{
 			return false;
 		}
 	}
@@ -39,20 +39,5 @@ public abstract class Connection {
 	 * Getter and Setter
 	 */
 	
-	public Device getDeviceA() {
-		return deviceA;
-	}
-
-	public void setDeviceA(Device deviceA) {
-		this.deviceA = deviceA;
-	}
-
-	public Device getDeviceB() {
-		return deviceB;
-	}
-
-	public void setDeviceB(Device deviceB) {
-		this.deviceB = deviceB;
-	}
-
+	
 }

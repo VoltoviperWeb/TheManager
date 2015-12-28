@@ -9,13 +9,17 @@ public class LAN extends Connection {
 	
 
 	public LAN(Device deviceA) {
-		this.deviceA = deviceA;
+		this.devices.add(deviceA);
 	}
 
 	public boolean connectWith(Device deviceB) {
 		try {
 			deviceB.unconnected(this);
-			this.deviceB = deviceB;
+			if(this.devices.size()<=1){
+			this.devices.add(deviceB);
+			}else{
+				throw new Exception("Verbindung hat bereits eine Verbindung");
+			}
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();

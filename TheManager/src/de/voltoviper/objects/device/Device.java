@@ -4,10 +4,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -42,7 +46,9 @@ public class Device implements Serializable{
 	Hersteller hersteller;
 	
 	Device_Status status;
-	@OneToMany(mappedBy="deviceA")
+	
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "CONN_DEVICE", joinColumns = { @JoinColumn(name = "device_id") }, inverseJoinColumns = { @JoinColumn(name = "conn_id") })
 	Collection<Connection> connections = new ArrayList<>();
 	
 	public Device(){
