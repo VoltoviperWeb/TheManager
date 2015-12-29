@@ -5,12 +5,11 @@
 	<packaging>war</packaging>
 	<artifactId>TheManager</artifactId>
 	<groupId>de.voltoviper</groupId>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-war-plugin</artifactId>
-
 			<version>2.6</version>
 		</dependency>
 	</dependencies>
