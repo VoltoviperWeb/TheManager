@@ -1,6 +1,5 @@
 package de.voltoviper.web;
 
-import com.thoughtworks.selenium.webdriven.commands.AltKeyUp;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
