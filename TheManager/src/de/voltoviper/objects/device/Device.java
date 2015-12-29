@@ -107,10 +107,17 @@ public class Device implements Serializable{
 				}
 			}
 		}
-		throw new Exception("No unnocented Interface");
+		throw new Exception("No unconnected Interface");
 		
 	}
 	
+	/*
+	 * toString Override
+	 */
+	@Override
+	public String toString() {
+		return bezeichnung;
+	}
 	
 	
 	/*
@@ -120,6 +127,8 @@ public class Device implements Serializable{
 	public int getDevice_id() {
 		return device_id;
 	}
+
+	
 
 	public void setDevice_id(int device_id) {
 		this.device_id = device_id;

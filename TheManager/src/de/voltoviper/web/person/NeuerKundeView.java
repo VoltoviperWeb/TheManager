@@ -73,7 +73,7 @@ public class NeuerKundeView extends FormLayout {
 			public void buttonClick(ClickEvent event) {
 				Kunde kunde = new Kunde(tf1.getValue(), tf2.getValue(), email.getValue(), telefon.getValue(),
 						login.getValue());
-				Notification.show("Kunde hinzugefügt", tf2.getValue(), Notification.Type.TRAY_NOTIFICATION);
+				Notification.show("Kunde hinzugefügt", kunde.toString(), Notification.Type.TRAY_NOTIFICATION);
 				formreset();
 			}
 		});

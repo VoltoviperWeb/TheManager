@@ -10,6 +10,7 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Button.ClickEvent;
 
@@ -23,6 +24,10 @@ import de.voltoviper.web.validatoren.CustomIntegerRangeValidator;
 public class NeuesDeviceView extends FormLayout implements KundenAuswahlInterface {
 	Kunde k;
 	ComboBox typ;
+	ComboBox hersteller;
+	TextField bezeichnung;
+	TextField lan;
+	TextField wlan;
 	Button eintragen;
 	/**
 	 * 
@@ -36,13 +41,15 @@ public class NeuesDeviceView extends FormLayout implements KundenAuswahlInterfac
 	private void init(BorderLayout layout) {
 
 		typ = new ComboBox("Typ");
+		typ.setRequired(true);
 		
 		for(Device_Typ device_typ:Device_Typ.values()){
 			typ.addItem(device_typ);
 		}
 		this.addComponent(typ);
 		
-		ComboBox hersteller = new ComboBox("Hersteller");
+		hersteller = new ComboBox("Hersteller");
+		hersteller.setRequired(true);
 		Session session = DBManager.getFactory().openSession();
 		try {
 			List<Hersteller> hersteller_list = session.createCriteria(Hersteller.class).list();
@@ -56,14 +63,15 @@ public class NeuesDeviceView extends FormLayout implements KundenAuswahlInterfac
 		}
 		addComponent(hersteller);
 		
-		TextField bezeichnung = new TextField("Bezeichnung");
+		bezeichnung = new TextField("Bezeichnung");
+		bezeichnung.setRequired(true);
 		addComponent(bezeichnung);
 		
-		TextField lan = new TextField("Anzahl LAN Schnittstellen");
+		lan = new TextField("Anzahl LAN Schnittstellen");
 		lan.addValidator(new CustomIntegerRangeValidator("Keine gültige Zahl", 0, null));
 		addComponent(lan);
 		
-		TextField wlan = new TextField("Anzahl W-LAN Schnittstellen");
+		wlan = new TextField("Anzahl W-LAN Schnittstellen");
 		wlan.addValidator(new CustomIntegerRangeValidator("Keine gültige Zahl", 0, null));
 		addComponent(wlan);
 		
@@ -84,24 +92,29 @@ public class NeuesDeviceView extends FormLayout implements KundenAuswahlInterfac
 			@Override
 			public void buttonClick(ClickEvent event) {
 				Device device = new Device((Device_Typ)typ.getValue(), k, (Hersteller)hersteller.getValue(),Integer.parseInt(lan.getValue()),Integer.parseInt(wlan.getValue()));
+				device.setBezeichnung(bezeichnung.getValue());
+				Notification.show("Gerät hinzugefügt", device.toString(), Notification.Type.TRAY_NOTIFICATION);
+				resetform();
 			}
+
+			
 		});
 		
 		this.addComponent(eintragen);
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
 		KundenAuswahlView k_auswahl = new KundenAuswahlView(layout, this);
 		layout.addComponent(k_auswahl, Constraint.EAST);
 	}
 
+	private void resetform() {
+		typ.setValue("");
+		hersteller.setValue("");
+		bezeichnung.setValue("");
+		lan.setValue("");
+		wlan.setValue("");
+		
+	}
+	
 	@Override
 	public void setKunde(Kunde k) {
 		this.k = k;
