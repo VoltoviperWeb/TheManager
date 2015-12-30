@@ -10,9 +10,14 @@
 		<property name="hibernate.connection.username">TheManager</property>
 		<property name="hibernate.default_schema">TheManager</property>
 		
-		<property name="hibernate.hbm2ddl.auto">update</property>
+		<property name="hibernate.hbm2ddl.auto">create-drop</property>
 		
 		<mapping class="de.voltoviper.objects.benutzer.Benutzer" />
 		<mapping class="de.voltoviper.objects.benutzer.Kunde" />
+		<mapping class="de.voltoviper.objects.device.Device" />
+		<mapping class="de.voltoviper.objects.device.Connection" />
+		<mapping class="de.voltoviper.objects.device.LAN" />
+		<mapping class="de.voltoviper.objects.device.WLAN" />
+		<mapping class="de.voltoviper.objects.standards.Hersteller" />
 	</session-factory>
 </hibernate-configuration>

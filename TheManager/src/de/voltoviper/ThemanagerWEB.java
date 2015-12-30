@@ -12,6 +12,7 @@ import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.UI;
 
 import de.voltoviper.web.Dashboard;
+import de.voltoviper.web.TopLeiste;
 import de.voltoviper.web.navigation.NavigationView;
 
 @SuppressWarnings("serial")
@@ -32,8 +33,9 @@ public class ThemanagerWEB extends UI {
 		ui = this;
 		layout = new BorderLayout();
 		layout.setMargin(true);
+		layout.setSpacing(true);
 		ui.setContent(layout);
-		
+		layout.addComponent(new TopLeiste(), Constraint.NORTH);
 		layout.addComponent(new Dashboard(), Constraint.CENTER);
 		
 		layout.addComponent(new NavigationView(layout), Constraint.WEST);
