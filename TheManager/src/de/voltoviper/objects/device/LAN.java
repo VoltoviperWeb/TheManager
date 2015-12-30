@@ -11,6 +11,10 @@ public class LAN extends Connection {
 	public LAN(Device deviceA) {
 		this.devices.add(deviceA);
 	}
+	
+	public LAN(){
+		
+	}
 
 	public boolean connectWith(Device deviceB) {
 		try {
@@ -26,4 +30,6 @@ public class LAN extends Connection {
 			return false;
 		}
 	}
+	
+	
 }

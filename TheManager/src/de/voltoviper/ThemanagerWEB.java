@@ -33,6 +33,7 @@ public class ThemanagerWEB extends UI {
 		ui = this;
 		layout = new BorderLayout();
 		layout.setMargin(true);
+		layout.setSpacing(true);
 		ui.setContent(layout);
 		layout.addComponent(new TopLeiste(), Constraint.NORTH);
 		layout.addComponent(new Dashboard(), Constraint.CENTER);

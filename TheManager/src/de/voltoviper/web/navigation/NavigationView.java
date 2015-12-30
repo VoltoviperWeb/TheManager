@@ -11,6 +11,7 @@ import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
 
 import de.voltoviper.web.Dashboard;
+import de.voltoviper.web.device.DeviceUebersicht;
 import de.voltoviper.web.device.NeuesDeviceView;
 import de.voltoviper.web.konfiguration.HerstellerUebersichtView;
 import de.voltoviper.web.person.KundeUebersicht;
@@ -82,6 +83,10 @@ public class NavigationView extends VerticalLayout {
 				case "Kundenübersicht":
 					resetView();
 					layout.addComponent(new KundeUebersicht(), Constraint.CENTER);
+					break;
+				case "Geräteübersicht":
+					resetView();
+					layout.addComponent(new DeviceUebersicht(layout), Constraint.CENTER);
 					break;
 				case "Neues Gerät":
 					resetView();

@@ -90,6 +90,18 @@ public class Device implements Serializable{
 			s.close();
 		}
 	}
+	/**
+	 * Überprüft, ob das Device mit irgendetwas anderem verbunden ist.
+	 * @return
+	 */
+	public boolean connected(){
+		for(Connection c: connections){
+			if(c.connected()){
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	public boolean unconnected(Connection conn) throws Exception {
 		

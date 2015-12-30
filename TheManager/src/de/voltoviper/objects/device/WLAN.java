@@ -12,6 +12,10 @@ public class WLAN extends Connection {
 	public WLAN(Device deviceA) {
 		this.devices.add(deviceA);
 	}
+	
+	public WLAN(){
+		
+	}
 
 	@Override
 	public boolean connectWith(Device deviceB) {
