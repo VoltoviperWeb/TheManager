@@ -1,5 +1,8 @@
 package de.voltoviper.web.person;
 
+import org.vaadin.addon.borderlayout.BorderLayout;
+import org.vaadin.addon.borderlayout.BorderLayout.Constraint;
+
 import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.data.validator.NullValidator;
 import com.vaadin.server.FontAwesome;
@@ -11,11 +14,13 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 
 import de.voltoviper.objects.benutzer.Kunde;
+import de.voltoviper.web.device.KundenAuswahlInterface;
+import de.voltoviper.web.device.KundenAuswahlView;
 import de.voltoviper.web.validatoren.CustomIntegerRangeValidator;
 
-public class NeuerKundeView extends FormLayout {
+public class NeuerKundeView extends FormLayout implements KundenAuswahlInterface {
 	NeuerKundeView view;
-	
+	Kunde k;
 	TextField tf1;
 	TextField tf2;
 	TextField email;
@@ -27,9 +32,13 @@ public class NeuerKundeView extends FormLayout {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public NeuerKundeView() {
+	public NeuerKundeView(BorderLayout layout, boolean neu) {
 		this.view = this;
-		setCaption("Einen neuen Kunden anlegen");
+		if (neu) {
+			setCaption("Einen neuen Kunden anlegen");
+		} else {
+			setCaption("Einen Kunden bearbeiten");
+		}
 		tf1 = new TextField("Vorname");
 		tf1.setIcon(FontAwesome.USER);
 		tf1.setRequired(true);
@@ -59,37 +68,113 @@ public class NeuerKundeView extends FormLayout {
 		login = new CheckBox("- Login");
 		login.setIcon(FontAwesome.LOCK);
 		this.addComponent(login);
+		if (neu) {
+			Button neuerKunde = new Button("Eintragen");
+			neuerKunde.setIcon(FontAwesome.CHECK);
+			neuerKunde.addClickListener(new Button.ClickListener() {
 
-		Button neuerKunde = new Button("Eintragen");
-		neuerKunde.setIcon(FontAwesome.CHECK);
-		neuerKunde.addClickListener(new Button.ClickListener() {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
 
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
+				@Override
+				public void buttonClick(ClickEvent event) {
+					Kunde kunde = new Kunde(tf1.getValue(), tf2.getValue(), email.getValue(), telefon.getValue(),
+							login.getValue());
+					Notification.show("Kunde hinzugefügt", kunde.toString(), Notification.Type.TRAY_NOTIFICATION);
+					formreset();
+				}
+			});
+			addComponent(neuerKunde);
 
-			@Override
-			public void buttonClick(ClickEvent event) {
-				Kunde kunde = new Kunde(tf1.getValue(), tf2.getValue(), email.getValue(), telefon.getValue(),
-						login.getValue());
-				Notification.show("Kunde hinzugefügt", kunde.toString(), Notification.Type.TRAY_NOTIFICATION);
-				formreset();
-			}
-		});
-		addComponent(neuerKunde);
+			Button reset = new Button("Reset");
+			reset.setIcon(FontAwesome.ARROW_CIRCLE_DOWN);
+			reset.addClickListener(new Button.ClickListener() {
 
-		Button reset = new Button("Reset");
-		reset.setIcon(FontAwesome.ARROW_CIRCLE_DOWN);
-		addComponent(reset);
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void buttonClick(ClickEvent event) {
+					// TODO Auto-generated method stub
+					formreset();
+				}
+			});
+			addComponent(reset);
+		} else {
+			Button neuerKunde = new Button("Update");
+			neuerKunde.setIcon(FontAwesome.CHECK);
+			neuerKunde.addClickListener(new Button.ClickListener() {
+
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void buttonClick(ClickEvent event) {
+					k.setFirstname(tf1.getValue());
+					k.setLastname(tf2.getValue());
+					k.setEmail(email.getValue());
+					k.setTelefon(telefon.getValue());
+					k.updateKunde();
+					Notification.show("Kunde bearbeitet", k.toString(), Notification.Type.TRAY_NOTIFICATION);
+					formreset();
+				}
+			});
+			addComponent(neuerKunde);
+
+			Button reset = new Button("Reset");
+			reset.setIcon(FontAwesome.ARROW_CIRCLE_DOWN);
+			reset.addClickListener(new Button.ClickListener() {
+
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void buttonClick(ClickEvent event) {
+					// TODO Auto-generated method stub
+					formreset();
+				}
+			});
+			addComponent(reset);
+
+			KundenAuswahlView k_auswahl = new KundenAuswahlView(layout, this);
+			layout.addComponent(k_auswahl, Constraint.EAST);
+		}
+
 	}
 
 	private void formreset() {
-		tf1.setValue("");
-		tf2.setValue("");
-		email.setValue("");
-		telefon.setValue("");
-		tf3.setValue("");
-		login.setValue(false);
+		if (k == null) {
+			tf1.setValue("");
+			tf2.setValue("");
+			email.setValue("");
+			telefon.setValue("");
+			tf3.setValue("");
+			login.setValue(false);
+		} else {
+			tf1.setValue(k.getFirstname());
+			tf2.setValue(k.getLastname());
+			email.setValue(k.getEmail());
+			telefon.setValue(k.getTelefon());
+			tf3.setValue("");
+			login.setValue(false);
+		}
+	}
+
+	@Override
+	public void setKunde(Kunde k) {
+		// TODO Auto-generated method stub
+		this.k = k;
+		tf1.setValue(k.getFirstname());
+		tf2.setValue(k.getLastname());
+		email.setValue(k.getEmail());
+		telefon.setValue(k.getTelefon());
 	}
 }

@@ -3,6 +3,8 @@ package de.voltoviper.objects.device;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import com.vaadin.ui.Notification;
+
 @Entity
 @DiscriminatorValue("LAN")
 public class LAN extends Connection {
@@ -27,6 +29,7 @@ public class LAN extends Connection {
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
+			Notification.show("Nicht erlaubt!", e.getMessage(), Notification.Type.ERROR_MESSAGE);
 			return false;
 		}
 	}

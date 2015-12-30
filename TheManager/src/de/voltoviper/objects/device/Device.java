@@ -94,6 +94,11 @@ public class Device implements Serializable{
 	 * Überprüft, ob das Device mit irgendetwas anderem verbunden ist.
 	 * @return
 	 */
+	
+	/**
+	 * Überprüft, ob das Device mit irgendeinem anderen Gerät verbunden ist.
+	 * @return Gibt einen boolschen Wert zurück, ob eines der Connections verbunden ist.
+	 */
 	public boolean connected(){
 		for(Connection c: connections){
 			if(c.connected()){
@@ -102,7 +107,12 @@ public class Device implements Serializable{
 		}
 		return false;
 	}
-	
+	/**
+	 * Überprüft ob eine Verbindung vorhanden ist, die nicht verbunden ist. Diese wird durch die Übergebene ersetzt. 
+	 * @param conn Connection, die eingetragen werden soll
+	 * @return Boolscher Wert, ob das eintragen funktioniert hat
+	 * @throws Exception wirft eine Exception mit der Nachricht, dass keine Verbindung ausgetauscht werden kann.
+	 */
 	public boolean unconnected(Connection conn) throws Exception {
 		
 		

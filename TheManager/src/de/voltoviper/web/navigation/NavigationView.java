@@ -76,9 +76,13 @@ public class NavigationView extends VerticalLayout {
 				String id = (String) event.getProperty().getValue();
 				if(id!=null){
 				switch(id){
+				case "Kunde bearbeiten":
+					resetView();
+					layout.addComponent(new NeuerKundeView(layout, false), Constraint.CENTER);
+					break;
 				case "Neuer Kunde":
 					resetView();
-					layout.addComponent(new NeuerKundeView(), Constraint.CENTER);
+					layout.addComponent(new NeuerKundeView(layout, true), Constraint.CENTER);
 					break;
 				case "Kundenübersicht":
 					resetView();

@@ -8,6 +8,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -23,12 +24,12 @@ public class Kunde extends Benutzer implements Serializable {
 	private static final long serialVersionUID = 1L;
 	String email, telefon;
 	Boolean login;
-	
-	@OneToMany(mappedBy="besitzer")
+
+	@OneToMany(mappedBy = "besitzer")
 	Collection<Device> devices = new ArrayList<>();
-	
-	public Kunde(){
-		
+
+	public Kunde() {
+
 	}
 
 	public Kunde(String firstname, String lastname, String email, String telefon, Boolean login) {
@@ -38,6 +39,23 @@ public class Kunde extends Benutzer implements Serializable {
 		this.telefon = telefon;
 		this.login = login;
 		savekunde(this);
+	}
+
+	public void updateKunde() {
+		Session session = DBManager.getFactory().openSession();
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			session.update(this);
+			tx.commit();
+		} catch (HibernateException e) {
+			if (tx != null)
+				tx.rollback();
+			e.printStackTrace();
+		} finally {
+			session.close();
+
+		}
 	}
 
 	private void savekunde(Kunde kunde) {
@@ -55,7 +73,7 @@ public class Kunde extends Benutzer implements Serializable {
 		} finally {
 			s.close();
 		}
-		
+
 	}
 
 	public String getEmail() {
@@ -81,6 +99,5 @@ public class Kunde extends Benutzer implements Serializable {
 	public void setLogin(Boolean login) {
 		this.login = login;
 	}
-	
 
 }
