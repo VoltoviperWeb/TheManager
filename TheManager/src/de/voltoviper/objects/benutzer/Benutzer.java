@@ -20,8 +20,8 @@ import de.voltoviper.system.EncryptPassword;
 @Table(name="USER")
 public abstract class Benutzer {
 	@Column(name = "username")
-	
 	String username;
+	
 	@Column (name = "password")
 	String password;
 	

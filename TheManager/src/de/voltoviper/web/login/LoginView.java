@@ -60,6 +60,7 @@ public class LoginView extends FormLayout{
 					
 					Criteria cr = session.createCriteria(Benutzer.class);
 					cr.add(Restrictions.eq("login", true));
+					cr.add(Restrictions.eq("username", username));
 					List<Benutzer> user = cr.list();
 					for(Benutzer b:user){
 						System.out.println(b.toString());
