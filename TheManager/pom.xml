@@ -5,7 +5,7 @@
 	<packaging>war</packaging>
 	<artifactId>TheManager</artifactId>
 	<groupId>de.voltoviper</groupId>
-	<version>0.0.3</version>
+	<version>0.1.0 Alpha</version>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.maven.plugins</groupId>
