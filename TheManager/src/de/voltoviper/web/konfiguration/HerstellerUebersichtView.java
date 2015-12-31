@@ -57,7 +57,6 @@ public class HerstellerUebersichtView extends BorderLayout{
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				System.out.println(navigation);
 				navigation.setView(new HerstellerHinzufuegen());
 			}
 		});

@@ -23,7 +23,7 @@ public class Kunde extends Benutzer implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	String email, telefon;
-	Boolean login;
+	
 
 	@OneToMany(mappedBy = "besitzer")
 	Collection<Device> devices = new ArrayList<>();
@@ -38,10 +38,11 @@ public class Kunde extends Benutzer implements Serializable {
 		this.email = email;
 		this.telefon = telefon;
 		this.login = login;
-		savekunde(this);
+		save(this);
 	}
 
-	public void updateKunde() {
+	@Override
+	public void update() {
 		Session session = DBManager.getFactory().openSession();
 		Transaction tx = null;
 		try {
@@ -58,7 +59,8 @@ public class Kunde extends Benutzer implements Serializable {
 		}
 	}
 
-	private void savekunde(Kunde kunde) {
+	@Override
+	public void save(Benutzer kunde) {
 		Session s = DBManager.getFactory().openSession();
 
 		Transaction tx = null;
@@ -92,12 +94,6 @@ public class Kunde extends Benutzer implements Serializable {
 		this.telefon = telefon;
 	}
 
-	public Boolean getLogin() {
-		return login;
-	}
-
-	public void setLogin(Boolean login) {
-		this.login = login;
-	}
+	
 
 }

@@ -17,7 +17,7 @@ import de.voltoviper.objects.device.Device;
 import de.voltoviper.web.DBManager;
 
 @Entity  
-@Table(name="Hersteller")
+@Table(name="HERSTELLER")
 public class Hersteller implements Serializable {
 
 	/**

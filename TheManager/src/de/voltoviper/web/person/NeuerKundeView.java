@@ -27,6 +27,10 @@ public class NeuerKundeView extends FormLayout implements KundenAuswahlInterface
 	TextField telefon;
 	TextField tf3;
 	CheckBox login;
+
+	EmailValidator emailvalidator = new EmailValidator("Dies ist keine E-Mail Adresse");
+	CustomIntegerRangeValidator plzvalidator = new CustomIntegerRangeValidator("Keine PLZ", 10000, 99999);
+	NullValidator nullvalidator = new NullValidator("Pflichtfeld", false);
 	/**
 	 * 
 	 */
@@ -42,18 +46,18 @@ public class NeuerKundeView extends FormLayout implements KundenAuswahlInterface
 		tf1 = new TextField("Vorname");
 		tf1.setIcon(FontAwesome.USER);
 		tf1.setRequired(true);
-		tf1.addValidator(new NullValidator("Pflichtfeld", false));
+		tf1.addValidator(nullvalidator);
 		this.addComponent(tf1);
 
 		tf2 = new TextField("Nachname");
 		tf2.setIcon(FontAwesome.USER);
 		tf2.setRequired(true);
-		tf2.addValidator(new NullValidator("Pflichtfeld", false));
+		tf2.addValidator(nullvalidator);
 		this.addComponent(tf2);
 
 		email = new TextField("E-Mail");
 		email.setIcon(FontAwesome.ENVELOPE_O);
-		email.addValidator(new EmailValidator("Dies ist keine E-Mail Adresse"));
+		email.addValidator(emailvalidator);
 		addComponent(email);
 
 		telefon = new TextField("Telefon");
@@ -62,7 +66,7 @@ public class NeuerKundeView extends FormLayout implements KundenAuswahlInterface
 
 		tf3 = new TextField("PLZ");
 		tf3.setIcon(FontAwesome.ENVELOPE);
-		tf3.addValidator(new CustomIntegerRangeValidator("Keine PLZ", 10000, 99999));
+		tf3.addValidator(plzvalidator);
 		this.addComponent(tf3);
 
 		login = new CheckBox("- Login");
@@ -80,10 +84,16 @@ public class NeuerKundeView extends FormLayout implements KundenAuswahlInterface
 
 				@Override
 				public void buttonClick(ClickEvent event) {
-					Kunde kunde = new Kunde(tf1.getValue(), tf2.getValue(), email.getValue(), telefon.getValue(),
-							login.getValue());
-					Notification.show("Kunde hinzugefügt", kunde.toString(), Notification.Type.TRAY_NOTIFICATION);
-					formreset();
+					try {
+						validateForm();
+
+						Kunde kunde = new Kunde(tf1.getValue(), tf2.getValue(), email.getValue(), telefon.getValue(),
+								login.getValue());
+						Notification.show("Kunde hinzugefügt", kunde.toString(), Notification.Type.TRAY_NOTIFICATION);
+						formreset();
+					} catch (Exception e) {
+						Notification.show("Formular Fehler", e.getMessage(), Notification.Type.ERROR_MESSAGE);
+					}
 				}
 			});
 			addComponent(neuerKunde);
@@ -120,7 +130,7 @@ public class NeuerKundeView extends FormLayout implements KundenAuswahlInterface
 					k.setLastname(tf2.getValue());
 					k.setEmail(email.getValue());
 					k.setTelefon(telefon.getValue());
-					k.updateKunde();
+					k.update();
 					Notification.show("Kunde bearbeitet", k.toString(), Notification.Type.TRAY_NOTIFICATION);
 					formreset();
 				}
@@ -147,6 +157,18 @@ public class NeuerKundeView extends FormLayout implements KundenAuswahlInterface
 			KundenAuswahlView k_auswahl = new KundenAuswahlView(layout, this);
 			layout.addComponent(k_auswahl, Constraint.EAST);
 		}
+
+	}
+
+	private void validateForm() throws Exception {
+		if (!emailvalidator.isValid(email.getValue())) {
+			throw new Exception(email.getValue() + " ist keine E-Mail Adresse");
+		}
+		if(!plzvalidator.isValid(tf3.getValue())){
+			throw new Exception(tf3.getValue() + " ist keine PLZ");
+		}
+		nullvalidator.validate(tf1);
+		nullvalidator.validate(tf2);
 
 	}
 

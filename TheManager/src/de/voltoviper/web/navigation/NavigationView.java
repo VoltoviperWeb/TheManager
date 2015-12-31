@@ -6,7 +6,6 @@ import org.vaadin.addon.borderlayout.BorderLayout.Constraint;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.ui.AbstractLayout;
-import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
 

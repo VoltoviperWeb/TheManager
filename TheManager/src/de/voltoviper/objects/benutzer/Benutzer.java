@@ -34,11 +34,25 @@ public abstract class Benutzer {
 	@Column (name="berechtigung")
 	String berechtigung;
 	
+	Boolean login;
+	
 	
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name = "id")
 	int id;
+    
+  
+    /*
+     * Absctract Methods
+     */
+    public abstract void save(Benutzer kunde);
+    public abstract void update();
+    
+    
+/*
+ * Getter and Setter
+ */
     
 	public String getUsername() {
 		return username;
@@ -75,6 +89,13 @@ public abstract class Benutzer {
 	}
 	public void setLastname(String lastname) {
 		this.lastname = lastname;
+	}
+	public Boolean getLogin() {
+		return login;
+	}
+
+	public void setLogin(Boolean login) {
+		this.login = login;
 	}
 	@Override
 	public String toString() {

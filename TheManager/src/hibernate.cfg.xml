@@ -14,6 +14,7 @@
 		
 		<mapping class="de.voltoviper.objects.benutzer.Benutzer" />
 		<mapping class="de.voltoviper.objects.benutzer.Kunde" />
+		<mapping class="de.voltoviper.objects.benutzer.Mitarbeiter" />
 		<mapping class="de.voltoviper.objects.device.Device" />
 		<mapping class="de.voltoviper.objects.device.Connection" />
 		<mapping class="de.voltoviper.objects.device.LAN" />

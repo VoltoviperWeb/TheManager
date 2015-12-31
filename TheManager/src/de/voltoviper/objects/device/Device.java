@@ -13,7 +13,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.Session;
@@ -26,7 +25,7 @@ import de.voltoviper.objects.standards.Hersteller;
 import de.voltoviper.web.DBManager;
 
 @Entity  
-@Table(name="Device")
+@Table(name="DEVICE")
 public class Device implements Serializable{
 	
 	/**
