@@ -15,6 +15,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -23,6 +25,7 @@ import de.voltoviper.objects.standards.Device_Status;
 import de.voltoviper.objects.standards.Device_Typ;
 import de.voltoviper.objects.standards.Hersteller;
 import de.voltoviper.web.DBManager;
+import de.voltoviper.web.login.LoginView;
 
 @Entity  
 @Table(name="DEVICE")
@@ -32,6 +35,8 @@ public class Device implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	private static final Logger logger = LogManager.getLogger(LoginView.class);
 
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	int device_id;
@@ -54,10 +59,11 @@ public class Device implements Serializable{
 		
 	}
 	
-	public Device(Device_Typ typ, Kunde besitzer, Hersteller hersteller, int lan, int wlan){
+	public Device(Device_Typ typ, Kunde besitzer, Hersteller hersteller, int lan, int wlan, String bezeichnung){
 		this.typ = typ;
 		this.besitzer=besitzer;
 		this.hersteller = hersteller;
+		this.bezeichnung = bezeichnung;
 		this.status = Device_Status.OK;
 	
 		for(int i=0;i<lan;i++){
@@ -68,6 +74,7 @@ public class Device implements Serializable{
 		}
 		
 		saveDevice(this);
+		
 	}
 /**
  * Speichert das Übergebene Objekt in der Datenbank.

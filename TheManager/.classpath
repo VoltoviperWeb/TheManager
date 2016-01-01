@@ -94,5 +94,16 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/xercesImpl-2.11.0.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/xml-apis-1.4.01.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/guava-16.0.1.vaadin1.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j-1.2-api-2.5.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j-api-2.5.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j-core-2.5.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j-flume-ng-2.5.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j-iostreams-2.5.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j-jcl-2.5.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j-jmx-gui-2.5.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j-jul-2.5.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j-nosql-2.5.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j-taglib-2.5.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j-web-2.5.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

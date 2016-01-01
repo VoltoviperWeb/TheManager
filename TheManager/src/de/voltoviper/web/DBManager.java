@@ -3,15 +3,20 @@ package de.voltoviper.web;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+
+import de.voltoviper.web.login.LoginView;
 
 public class DBManager implements ServletContextListener {
 	/**
 	 * 
 	 */
 	static SessionFactory factory;
+	private static final Logger logger = LogManager.getLogger(DBManager.class);
 
 	public DBManager() {
 		super();
@@ -22,25 +27,16 @@ public class DBManager implements ServletContextListener {
 	}
 
 	private void init() {
-		System.out.println("----------");
-		System.out.println("---------- DBManager Initializing ----------");
-		System.out.println("----------");
+		logger.trace("DBManager init start!");
 		factory = new Configuration().configure().buildSessionFactory();
-
-		System.out.println("----------");
-		System.out.println("---------- DBManager Initialized successfully ----------");
-		System.out.println("----------");
+		logger.trace("DBManager init finish!");
 	}
 
 	private void destroy() {
-		System.out.println("----------");
-		System.out.println("---------- DBManager start closing ----------");
-		System.out.println("----------");
+		logger.trace("DBManager destroy start");
 		if (factory != null)
 			factory.close();
-		System.out.println("----------");
-		System.out.println("---------- DBManager closing successfully ----------");
-		System.out.println("----------");
+		logger.trace("DBManager destroy complete");
 	}
 
 	@Override
@@ -51,7 +47,7 @@ public class DBManager implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
-
+		
 		init();
 
 	}

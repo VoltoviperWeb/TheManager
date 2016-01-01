@@ -91,7 +91,7 @@ public class NeuesDeviceView extends FormLayout implements KundenAuswahlInterfac
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				Device device = new Device((Device_Typ)typ.getValue(), k, (Hersteller)hersteller.getValue(),Integer.parseInt(lan.getValue()),Integer.parseInt(wlan.getValue()));
+				Device device = new Device((Device_Typ)typ.getValue(), k, (Hersteller)hersteller.getValue(),Integer.parseInt(lan.getValue()),Integer.parseInt(wlan.getValue()), bezeichnung.getValue());
 				device.setBezeichnung(bezeichnung.getValue());
 				Notification.show("Gerät hinzugefügt", device.toString(), Notification.Type.TRAY_NOTIFICATION);
 				resetform();

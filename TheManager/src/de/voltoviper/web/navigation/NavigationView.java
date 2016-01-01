@@ -44,7 +44,7 @@ public class NavigationView extends VerticalLayout {
 			
 			
 		Tree tree = new Tree("Hauptmenü");
-
+		tree.setNullSelectionAllowed(false);
 		for (int i = 0; i < planets.length; i++) {
 			String item = (String) (planets[i][0]);
 			tree.addItem(item);

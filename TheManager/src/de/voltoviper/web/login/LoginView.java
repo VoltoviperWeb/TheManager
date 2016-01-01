@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -28,7 +30,7 @@ public class LoginView extends FormLayout{
 
 	TextField username;
 	PasswordField password;
-
+	private static final Logger logger = LogManager.getLogger(LoginView.class);
 	/**
 	 * 
 	 */
@@ -52,7 +54,6 @@ public class LoginView extends FormLayout{
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				System.out.println("Click");
 				String passwd;
 				Session session = DBManager.getFactory().openSession();
 				try {
@@ -60,11 +61,11 @@ public class LoginView extends FormLayout{
 					
 					Criteria cr = session.createCriteria(Benutzer.class);
 					cr.add(Restrictions.eq("login", true));
-					cr.add(Restrictions.eq("username", username));
+					cr.add(Restrictions.eq("username", username.getValue()));
 					List<Benutzer> user = cr.list();
 					for(Benutzer b:user){
-						System.out.println(b.toString());
 						if(username.getValue().toLowerCase().equals(b.getUsername())&& passwd.equals(b.getPassword())){
+							logger.trace("Welcome, "+b.toString()+"!");
 							parent.initmain();
 							break;
 						}
