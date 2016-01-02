@@ -152,11 +152,20 @@ public class Device implements Serializable{
 	 * Getter and Setter
 	 */
 
+	
 	public int getDevice_id() {
 		return device_id;
 	}
 
 	
+
+	public Collection<Connection> getConnections() {
+		return connections;
+	}
+
+	public void setConnections(Collection<Connection> connections) {
+		this.connections = connections;
+	}
 
 	public void setDevice_id(int device_id) {
 		this.device_id = device_id;

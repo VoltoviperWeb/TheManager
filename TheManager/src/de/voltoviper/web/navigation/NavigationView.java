@@ -89,7 +89,7 @@ public class NavigationView extends VerticalLayout {
 					break;
 				case "Geräteübersicht":
 					resetView();
-					layout.addComponent(new DeviceUebersicht(layout), Constraint.CENTER);
+					layout.addComponent(new DeviceUebersicht(layout, navigation), Constraint.CENTER);
 					break;
 				case "Neues Gerät":
 					resetView();

@@ -9,13 +9,24 @@
 		<Root level="error">
 			<AppenderRef ref="Console" />
 		</Root>
-		<Logger name="de.voltoviper.web.login.LoginView" level="trace" additivity="false">
+		<Logger name="de.voltoviper.web.device.DeviceUebersicht" level="trace"
+			additivity="false">
 			<AppenderRef ref="Console" />
 		</Logger>
-		<Logger name="de.voltoviper.objects.device.Device" level="trace" additivity="false">
+		<Logger name="de.voltoviper.ThemanagerWEB" level="trace"
+			additivity="false">
 			<AppenderRef ref="Console" />
 		</Logger>
-		<Logger name="de.voltoviper.web.DBManager" level="trace" additivity="false">
+		<Logger name="de.voltoviper.web.login.LoginView" level="trace"
+			additivity="false">
+			<AppenderRef ref="Console" />
+		</Logger>
+		<Logger name="de.voltoviper.objects.device.Device" level="trace"
+			additivity="false">
+			<AppenderRef ref="Console" />
+		</Logger>
+		<Logger name="de.voltoviper.web.DBManager" level="trace"
+			additivity="false">
 			<AppenderRef ref="Console" />
 		</Logger>
 	</Loggers>

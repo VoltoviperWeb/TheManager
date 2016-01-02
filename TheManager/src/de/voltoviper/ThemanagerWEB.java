@@ -38,6 +38,7 @@ public class ThemanagerWEB extends UI {
 
 	@Override
 	protected void init(VaadinRequest request) {		
+		logger.trace("Init start");
 		standard();
 
 		ui = this;
@@ -49,16 +50,18 @@ public class ThemanagerWEB extends UI {
 		initlogin();
 
 		ui.setContent(layout);
+		logger.trace("Init successful");
 	}
 
 	private void standard() {
 		if (!runned) {
+			logger.trace("Standard Objekte werden eingerichtet");
 			runned=true;
 			Mitarbeiter mitarbeiter = new Mitarbeiter("user", "test", "Christoph", "Nebendahl", true);
 			Hersteller hersteller = new Hersteller("MSI");
 			Kunde k = new Kunde("Silja", "Ratjhe", "testing@aol.com", "0123456789", false);
 			Device d = new Device(Device_Typ.LAPTOP, k, hersteller, 1,1,"Studienlaptop");
-			
+			logger.trace("standard Objekte wurden erfolgreich eingerichtet");
 		}
 	}
 
@@ -74,11 +77,13 @@ public class ThemanagerWEB extends UI {
 	}
 
 	private void clearLayout() {
+		
 		layout.removeComponent(Constraint.NORTH);
 		layout.removeComponent(Constraint.EAST);
 		layout.removeComponent(Constraint.SOUTH);
 		layout.removeComponent(Constraint.WEST);
 		layout.removeComponent(Constraint.CENTER);
+		logger.trace("Layout cleared");
 	}
 
 }

@@ -2,12 +2,13 @@ package de.voltoviper.web.device;
 
 import java.util.List;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.vaadin.addon.borderlayout.BorderLayout;
 
-import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.ui.Table;
@@ -17,16 +18,20 @@ import de.voltoviper.objects.device.Device;
 import de.voltoviper.objects.standards.Device_Typ;
 import de.voltoviper.objects.standards.Hersteller;
 import de.voltoviper.web.DBManager;
+import de.voltoviper.web.navigation.NavigationView;
 
 public class DeviceUebersicht extends BorderLayout implements KundenAuswahlInterface {
 	Table table;
+	
+
+	private static final Logger logger = LogManager.getLogger(DeviceUebersicht.class);
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	Kunde k;
 
-	public DeviceUebersicht(BorderLayout layout) {
+	public DeviceUebersicht(BorderLayout layout, NavigationView navigation) {
 
 		table = new Table("Geräteübersicht");
 		table.addContainerProperty("ID", Integer.class, null);
@@ -49,6 +54,8 @@ public class DeviceUebersicht extends BorderLayout implements KundenAuswahlInter
 					try {
 						Device device = (Device) session.get(Device.class,
 								Integer.parseInt(table.getItemCaption(event.getItemId())));
+						logger.trace(device.toString()+" wurde ausgewählt");
+						navigation.setView(new DeviceMenu(device));
 					} catch (Exception e) {
 						e.printStackTrace();
 					} finally {

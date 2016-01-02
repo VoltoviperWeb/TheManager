@@ -95,5 +95,6 @@ public class Kunde extends Benutzer implements Serializable {
 	}
 
 	
+	
 
 }
