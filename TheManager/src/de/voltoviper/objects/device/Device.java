@@ -6,6 +6,7 @@ import java.util.Collection;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,10 +28,10 @@ import de.voltoviper.objects.standards.Hersteller;
 import de.voltoviper.web.DBManager;
 import de.voltoviper.web.login.LoginView;
 
-@Entity  
-@Table(name="DEVICE")
-public class Device implements Serializable{
-	
+@Entity
+@Table(name = "DEVICE")
+public class Device implements Serializable {
+
 	/**
 	 * 
 	 */
@@ -38,48 +39,54 @@ public class Device implements Serializable{
 
 	private static final Logger logger = LogManager.getLogger(LoginView.class);
 
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	int device_id;
-	
+
 	String bezeichnung;
 	Device_Typ typ;
-	
+
 	@ManyToOne
 	Kunde besitzer;
 	@ManyToOne
 	Hersteller hersteller;
-	
+
 	Device_Status status;
-	
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "CONN_DEVICE", joinColumns = { @JoinColumn(name = "device_id") }, inverseJoinColumns = { @JoinColumn(name = "conn_id") })
+
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinTable(name = "CONN_DEVICE", joinColumns = { @JoinColumn(name = "device_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "conn_id") })
 	Collection<Connection> connections = new ArrayList<>();
-	
-	public Device(){
-		
+
+	public Device() {
+
 	}
-	
-	public Device(Device_Typ typ, Kunde besitzer, Hersteller hersteller, int lan, int wlan, String bezeichnung){
+
+	public Device(Device_Typ typ, Kunde besitzer, Hersteller hersteller, int lan, int wlan, String bezeichnung) {
 		this.typ = typ;
-		this.besitzer=besitzer;
+		this.besitzer = besitzer;
 		this.hersteller = hersteller;
 		this.bezeichnung = bezeichnung;
 		this.status = Device_Status.OK;
-	
-		for(int i=0;i<lan;i++){
+
+		for (int i = 0; i < lan; i++) {
 			connections.add(new LAN(this));
 		}
-		for(int i=0;i<wlan;i++){
+		for (int i = 0; i < wlan; i++) {
 			connections.add(new WLAN(this));
 		}
-		
+
 		saveDevice(this);
-		
+
 	}
-/**
- * Speichert das Übergebene Objekt in der Datenbank.
- * @param device Objekt vom Typ Device, dass in der Datenbank gespeichert werden soll.
- */
+
+	/**
+	 * Speichert das Übergebene Objekt in der Datenbank.
+	 * 
+	 * @param device
+	 *            Objekt vom Typ Device, dass in der Datenbank gespeichert
+	 *            werden soll.
+	 */
 	private void saveDevice(Device device) {
 		Session s = DBManager.getFactory().openSession();
 
@@ -98,37 +105,45 @@ public class Device implements Serializable{
 	}
 	/**
 	 * Überprüft, ob das Device mit irgendetwas anderem verbunden ist.
+	 * 
 	 * @return
 	 */
-	
+
 	/**
 	 * Überprüft, ob das Device mit irgendeinem anderen Gerät verbunden ist.
-	 * @return Gibt einen boolschen Wert zurück, ob eines der Connections verbunden ist.
+	 * 
+	 * @return Gibt einen boolschen Wert zurück, ob eines der Connections
+	 *         verbunden ist.
 	 */
-	public boolean connected(){
-		for(Connection c: connections){
-			if(c.connected()){
+	public boolean connected() {
+		for (Connection c : connections) {
+			if (c.connected()) {
 				return true;
 			}
 		}
 		return false;
 	}
+
 	/**
-	 * Überprüft ob eine Verbindung vorhanden ist, die nicht verbunden ist. Diese wird durch die Übergebene ersetzt. 
-	 * @param conn Connection, die eingetragen werden soll
+	 * Überprüft ob eine Verbindung vorhanden ist, die nicht verbunden ist.
+	 * Diese wird durch die Übergebene ersetzt.
+	 * 
+	 * @param conn
+	 *            Connection, die eingetragen werden soll
 	 * @return Boolscher Wert, ob das eintragen funktioniert hat
-	 * @throws Exception wirft eine Exception mit der Nachricht, dass keine Verbindung ausgetauscht werden kann.
+	 * @throws Exception
+	 *             wirft eine Exception mit der Nachricht, dass keine Verbindung
+	 *             ausgetauscht werden kann.
 	 */
 	public boolean unconnected(Connection conn) throws Exception {
-		
-		
+
 		ArrayList<Connection> speicher = new ArrayList<>();
-		for(Connection c: connections){
+		for (Connection c : connections) {
 			speicher.add(c);
 		}
-		for(Connection c: speicher){
-			if(c.getClass().equals(conn.getClass())){
-				if(!c.connected()){
+		for (Connection c : speicher) {
+			if (c.getClass().equals(conn.getClass())) {
+				if (!c.connected()) {
 					connections.remove(c);
 					connections.add(conn);
 					return true;
@@ -136,9 +151,9 @@ public class Device implements Serializable{
 			}
 		}
 		throw new Exception("No unconnected Interface");
-		
+
 	}
-	
+
 	/*
 	 * toString Override
 	 */
@@ -146,18 +161,14 @@ public class Device implements Serializable{
 	public String toString() {
 		return bezeichnung;
 	}
-	
-	
+
 	/*
 	 * Getter and Setter
 	 */
 
-	
 	public int getDevice_id() {
 		return device_id;
 	}
-
-	
 
 	public Collection<Connection> getConnections() {
 		return connections;
@@ -210,6 +221,5 @@ public class Device implements Serializable{
 	public void setStatus(Device_Status status) {
 		this.status = status;
 	}
-	
 
 }
