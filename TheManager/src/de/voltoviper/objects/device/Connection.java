@@ -22,7 +22,7 @@ public abstract class Connection {
 	@GeneratedValue
 	int conn_id;
 	
-	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "connections")
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "connections")
 	Collection<Device> devices = new ArrayList<>();
 
 	public boolean connected() {

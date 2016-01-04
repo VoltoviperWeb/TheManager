@@ -9,7 +9,7 @@
 		<property name="hibernate.connection.url">jdbc:mysql://81.169.235.144:3306/TheManager</property>
 		<property name="hibernate.connection.username">TheManager</property>
 		<property name="hibernate.default_schema">TheManager</property>
-		
+		<property name="hibernate.enable_lazy_load_no_trans">true</property>
 		<property name="hibernate.hbm2ddl.auto">create-drop</property>
 		
 		<mapping class="de.voltoviper.objects.benutzer.Benutzer" />

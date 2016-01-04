@@ -53,7 +53,7 @@ public class Device implements Serializable {
 
 	Device_Status status;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "CONN_DEVICE", joinColumns = { @JoinColumn(name = "device_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "conn_id") })
 	Collection<Connection> connections = new ArrayList<>();

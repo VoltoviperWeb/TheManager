@@ -3,7 +3,11 @@ package de.voltoviper.objects.device;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import org.hibernate.Session;
+
 import com.vaadin.ui.Notification;
+
+import de.voltoviper.web.DBManager;
 
 @Entity
 @DiscriminatorValue("LAN")
@@ -19,6 +23,7 @@ public class LAN extends Connection {
 	}
 
 	public boolean connectWith(Device deviceB) {
+				
 		try {
 			deviceB.unconnected(this);
 			if(this.devices.size()<=1){

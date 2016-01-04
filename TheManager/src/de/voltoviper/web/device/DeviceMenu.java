@@ -5,7 +5,9 @@ import java.util.List;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.vaadin.addon.borderlayout.BorderLayout;
 
@@ -48,6 +50,11 @@ public class DeviceMenu extends BorderLayout {
 
 	}
 
+	/**
+	 * Initialisiert das accordion für die Device Übersicht
+	 * 
+	 * @param device
+	 */
 	private void init(Device device) {
 		accordion = new Accordion();
 
@@ -67,7 +74,7 @@ public class DeviceMenu extends BorderLayout {
 
 	private void initTabVerbindung(Device device) {
 		Layout verbindung = new FormLayout();
-		
+
 		ComboBox lan = new ComboBox("Lan Verbindungen");
 
 		// Content for the PopupView
@@ -91,25 +98,41 @@ public class DeviceMenu extends BorderLayout {
 		PopupView popup = new PopupView(null, popupContent);
 		Button button = new Button("", click -> popup.setPopupVisible(true));
 		button.setVisible(false);
-		devices.addValueChangeListener(new ComboBox.ValueChangeListener(){
+		devices.addValueChangeListener(new ComboBox.ValueChangeListener() {
 
 			@Override
 			public void valueChange(ValueChangeEvent event) {
 				LAN connection = (LAN) lan.getValue();
-				connection.connectWith((Device)event.getProperty().getValue());
-				logger.trace(device+" wurde mit "+ ((Device)event.getProperty().getValue()).toString()+" verbunden!");
-				Notification.show("Verbunden", device+" wurde mit "+ ((Device)event.getProperty().getValue()).toString()+" verbunden!", Notification.Type.TRAY_NOTIFICATION);
-				popup.setVisible(false);
-				button.setCaption("Zeige Verbindung");
+				Transaction tx = null;
+				Session session = DBManager.getFactory().openSession();
+				try {
+					connection.connectWith((Device) event.getProperty().getValue());
+					
+					tx = session.beginTransaction();
+					session.update(connection);
+					session.update((Device) event.getProperty().getValue());
+					tx.commit();
+
+					logger.trace(device + " wurde mit " + ((Device) event.getProperty().getValue()).toString()
+							+ " verbunden!");
+					Notification.show("Verbunden", device + " wurde mit "
+							+ ((Device) event.getProperty().getValue()).toString() + " verbunden!",
+							Notification.Type.TRAY_NOTIFICATION);
+					popup.setVisible(false);
+					button.setCaption("Zeige Verbindung");
+				} catch (HibernateException e) {
+					if (tx != null)
+						tx.rollback();
+					e.printStackTrace();
+					Notification.show("Fehler" , e.getMessage(), Notification.Type.ERROR_MESSAGE);
+				} finally {
+					session.close();
+				}
 			}
-			
+
 		});
 
 		popupContent.addComponent(devices);
-
-		
-
-		
 
 		layout.addComponents(button, popup);
 
