@@ -77,7 +77,7 @@ public class DeviceMenu extends BorderLayout {
 
 		ComboBox lan = new ComboBox("Lan Verbindungen");
 
-		// Content for the PopupView
+		// LAN Popup
 		VerticalLayout popupContent = new VerticalLayout();
 		ComboBox devices = new ComboBox("Geräte");
 		Session session = DBManager.getFactory().openSession();
@@ -98,7 +98,34 @@ public class DeviceMenu extends BorderLayout {
 		PopupView popup = new PopupView(null, popupContent);
 		Button button = new Button("", click -> popup.setPopupVisible(true));
 		button.setVisible(false);
+
+		// Ende PopUp
+
+		lan.addValueChangeListener(new ComboBox.ValueChangeListener() {
+
+			@Override
+			public void valueChange(ValueChangeEvent event) {
+				if (event.getProperty().getValue() != null) {
+					button.setVisible(true);
+					if(((LAN)event.getProperty().getValue()).connected()){
+						button.setCaption("Zeige Verbindung");
+					}else{
+						button.setCaption("Verbinde");
+					}
+				} else {
+					button.setVisible(false);
+				}
+
+			}
+
+		});
+
 		devices.addValueChangeListener(new ComboBox.ValueChangeListener() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void valueChange(ValueChangeEvent event) {
@@ -107,7 +134,7 @@ public class DeviceMenu extends BorderLayout {
 				Session session = DBManager.getFactory().openSession();
 				try {
 					connection.connectWith((Device) event.getProperty().getValue());
-					
+
 					tx = session.beginTransaction();
 					session.update(connection);
 					session.update((Device) event.getProperty().getValue());
@@ -124,7 +151,7 @@ public class DeviceMenu extends BorderLayout {
 					if (tx != null)
 						tx.rollback();
 					e.printStackTrace();
-					Notification.show("Fehler" , e.getMessage(), Notification.Type.ERROR_MESSAGE);
+					Notification.show("Fehler", e.getMessage(), Notification.Type.ERROR_MESSAGE);
 				} finally {
 					session.close();
 				}
@@ -134,20 +161,50 @@ public class DeviceMenu extends BorderLayout {
 
 		popupContent.addComponent(devices);
 
-		layout.addComponents(button, popup);
+		ComboBox wlan = new ComboBox("W-Lan Verbindungen");
+		// WLAN Popup
+		VerticalLayout popupContentwlan = new VerticalLayout();
+		ComboBox devices_wlan = new ComboBox("Geräte");
+		Session s = DBManager.getFactory().openSession();
+		try {
+			Criteria cr = s.createCriteria(Device.class);
+			cr.add(Restrictions.eq("besitzer", device.getBesitzer()));
 
-		ComboBox wlan = new ComboBox("WLan Verbindungen");
-		Label wlan_connected = new Label("Not connected");
-		Button wlan_connect = new Button("Verbinde jetzt");
-		for (Connection c : device.getConnections()) {
-			if (c.getClass().equals(LAN.class)) {
-				lan.addItem(c);
-			} else if (c.getClass().equals(WLAN.class)) {
-				wlan.addItem(c);
+			List<Device> devices_list = cr.list();
+			for (Device d : devices_list) {
+				if (!d.equals(device))
+					devices_wlan.addItem(d);
 			}
-		}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			s.close();
 
-		lan.addValueChangeListener(new ComboBox.ValueChangeListener() {
+		}
+		PopupView popupwlan = new PopupView(null, popupContentwlan);
+		Button buttonwlan = new Button("", click -> popupwlan.setPopupVisible(true));
+		buttonwlan.setVisible(false);
+		
+		wlan.addValueChangeListener(new ComboBox.ValueChangeListener() {
+
+			@Override
+			public void valueChange(ValueChangeEvent event) {
+				if (event.getProperty().getValue() != null) {
+					buttonwlan.setVisible(true);
+					if(((WLAN)event.getProperty().getValue()).connected()){
+						buttonwlan.setCaption("Zeige Verbindung");
+					}else{
+						buttonwlan.setCaption("Verbinde");
+					}
+				} else {
+					buttonwlan.setVisible(false);
+				}
+
+			}
+
+		});
+		
+		devices_wlan.addValueChangeListener(new ComboBox.ValueChangeListener() {
 
 			/**
 			 * 
@@ -156,30 +213,60 @@ public class DeviceMenu extends BorderLayout {
 
 			@Override
 			public void valueChange(ValueChangeEvent event) {
-				LAN lan = (LAN) event.getProperty().getValue();
-				if (lan != null) {
-					if (lan.connected()) {
-						button.setCaption("Zeige Verbindung");
-					} else {
-						button.setCaption("Verbinde");
-					}
-					button.setVisible(true);
+				WLAN connection = (WLAN) wlan.getValue();
+				Transaction tx = null;
+				Session session = DBManager.getFactory().openSession();
+				try {
+					connection.connectWith((Device) event.getProperty().getValue());
 
-				} else {
-					button.setVisible(false);
+					tx = session.beginTransaction();
+					session.update(connection);
+					session.update((Device) event.getProperty().getValue());
+					tx.commit();
+
+					logger.trace(device + " wurde mit " + ((Device) event.getProperty().getValue()).toString()
+							+ " verbunden!");
+					Notification.show("Verbunden", device + " wurde mit "
+							+ ((Device) event.getProperty().getValue()).toString() + " verbunden!",
+							Notification.Type.TRAY_NOTIFICATION);
+					popupwlan.setVisible(false);
+					buttonwlan.setCaption("Zeige Verbindung");
+				} catch (HibernateException e) {
+					if (tx != null)
+						tx.rollback();
+					e.printStackTrace();
+					Notification.show("Fehler", e.getMessage(), Notification.Type.ERROR_MESSAGE);
+				} finally {
+					session.close();
 				}
 			}
 
 		});
+
+		for (Connection c : device.getConnections()) {
+			if (c.getClass().equals(LAN.class)) {
+				lan.addItem(c);
+			} else if (c.getClass().equals(WLAN.class)) {
+				wlan.addItem(c);
+			}
+		}
+
+		if (lan.getItemIds().size() == 0) {
+			lan.setVisible(false);
+		}
+		if (wlan.getItemIds().size() == 0) {
+			wlan.setVisible(false);
+		}
+
+		popupContentwlan.addComponent(devices_wlan);
+
+		layout.addComponents(popup);
+		layout.addComponents(popupwlan);
 		verbindung.addComponent(lan);
 		verbindung.addComponent(button);
 		verbindung.addComponent(wlan);
-		verbindung.addComponent(wlan_connected);
-		verbindung.addComponent(wlan_connect);
+		verbindung.addComponent(buttonwlan);
 
-		for (int i = 0; i < device.getConnections().size(); i++) {
-
-		}
 		accordion.addTab(verbindung, "Verbindung", null);
 
 	}

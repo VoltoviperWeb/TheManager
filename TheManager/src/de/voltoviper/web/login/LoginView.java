@@ -26,7 +26,7 @@ import de.voltoviper.web.DBManager;
 
 import com.vaadin.ui.Button.ClickEvent;
 
-public class LoginView extends FormLayout{
+public class LoginView extends FormLayout {
 
 	TextField username;
 	PasswordField password;
@@ -36,17 +36,16 @@ public class LoginView extends FormLayout{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	
 	public LoginView(ThemanagerWEB parent) {
 		username = new TextField("Benutzername:");
 		addComponent(username);
-		
+
 		password = new PasswordField("Passwort:");
 		addComponent(password);
-		
+
 		Button login = new Button("Login");
 		login.addClickListener(new Button.ClickListener() {
-			
+
 			/**
 			 * 
 			 */
@@ -54,25 +53,36 @@ public class LoginView extends FormLayout{
 
 			@Override
 			public void buttonClick(ClickEvent event) {
+
+				boolean logged = false;
 				String passwd;
 				Session session = DBManager.getFactory().openSession();
 				try {
 					passwd = EncryptPassword.SHA512(password.getValue());
-					
+
 					Criteria cr = session.createCriteria(Benutzer.class);
 					cr.add(Restrictions.eq("login", true));
 					cr.add(Restrictions.eq("username", username.getValue()));
 					List<Benutzer> user = cr.list();
-					for(Benutzer b:user){
-						if(username.getValue().toLowerCase().equals(b.getUsername())&& passwd.equals(b.getPassword())){
-							logger.trace("Welcome, "+b.toString()+"!");
+					for (Benutzer b : user) {
+						if (username.getValue().toLowerCase().equals(b.getUsername())
+								&& passwd.equals(b.getPassword())) {
+							logger.trace("Welcome, " + b.toString() + "!");
 							parent.initmain();
+							logged = true;
 							break;
 						}
 					}
-					
-					
-					
+					if (logged) {
+						Notification.show("Login Erfolgreich",
+								"Herzlich Willkommen, " + username.getValue().toLowerCase(),
+								Notification.Type.HUMANIZED_MESSAGE);
+					} else {
+						Notification.show("Login Fehler",
+								username.getValue().toLowerCase() + " konnte nicht eingeloggt werden",
+								Notification.Type.WARNING_MESSAGE);
+					}
+
 				} catch (NoSuchAlgorithmException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -81,18 +91,15 @@ public class LoginView extends FormLayout{
 					e.printStackTrace();
 				}
 
-				
 			}
 
-			
 		});
 		addComponent(login);
 	}
-	
-	
+
 	private void formreset() {
 		username.setValue("");
 		password.setValue("");
-		
+
 	}
 }
