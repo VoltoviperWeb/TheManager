@@ -5,25 +5,20 @@ import java.util.List;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.vaadin.addon.borderlayout.BorderLayout;
 
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.ui.Accordion;
-import com.vaadin.ui.Button;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.PopupView;
+
 import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Button.ClickEvent;
 
 import de.voltoviper.objects.benutzer.Kunde;
 import de.voltoviper.objects.device.Connection;
@@ -37,7 +32,6 @@ import de.voltoviper.web.DBManager;
 public class DeviceMenu extends BorderLayout {
 	Accordion accordion;
 	BorderLayout layout;
-
 	private static final Logger logger = LogManager.getLogger(DeviceMenu.class);
 	/**
 	 * 
@@ -67,207 +61,70 @@ public class DeviceMenu extends BorderLayout {
 	}
 
 	private void initTabTicket(Device device) {
-		Layout ticket = new VerticalLayout();
-		accordion.addTab(ticket, "Tickets", null);
 
 	}
 
+	/**
+	 * Baut den Tab der Verbindungen auf.
+	 * 
+	 * @param device
+	 *            Das Device für den die Verbindungen verwaltet werden sollen
+	 * @author Christoph Nebendahl
+	 */
 	private void initTabVerbindung(Device device) {
-		Layout verbindung = new FormLayout();
-
-		ComboBox lan = new ComboBox("Lan Verbindungen");
-
-		// LAN Popup
-		VerticalLayout popupContent = new VerticalLayout();
-		ComboBox devices = new ComboBox("Geräte");
-		Session session = DBManager.getFactory().openSession();
-		try {
-			Criteria cr = session.createCriteria(Device.class);
-			cr.add(Restrictions.eq("besitzer", device.getBesitzer()));
-			List<Device> devices_list = cr.list();
-			for (Device d : devices_list) {
-				if (!d.equals(device))
-					devices.addItem(d);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			session.close();
-
-		}
-		PopupView popup = new PopupView(null, popupContent);
-		Button button = new Button("", click -> popup.setPopupVisible(true));
-		button.setVisible(false);
-
-		// Ende PopUp
-
-		lan.addValueChangeListener(new ComboBox.ValueChangeListener() {
-
-			@Override
-			public void valueChange(ValueChangeEvent event) {
-				if (event.getProperty().getValue() != null) {
-					button.setVisible(true);
-					if(((LAN)event.getProperty().getValue()).connected()){
-						button.setCaption("Zeige Verbindung");
-					}else{
-						button.setCaption("Verbinde");
-					}
-				} else {
-					button.setVisible(false);
-				}
-
-			}
-
-		});
-
-		devices.addValueChangeListener(new ComboBox.ValueChangeListener() {
-
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void valueChange(ValueChangeEvent event) {
-				LAN connection = (LAN) lan.getValue();
-				Transaction tx = null;
-				Session session = DBManager.getFactory().openSession();
-				try {
-					connection.connectWith((Device) event.getProperty().getValue());
-
-					tx = session.beginTransaction();
-					session.update(connection);
-					session.update((Device) event.getProperty().getValue());
-					tx.commit();
-
-					logger.trace(device + " wurde mit " + ((Device) event.getProperty().getValue()).toString()
-							+ " verbunden!");
-					Notification.show("Verbunden", device + " wurde mit "
-							+ ((Device) event.getProperty().getValue()).toString() + " verbunden!",
-							Notification.Type.TRAY_NOTIFICATION);
-					popup.setVisible(false);
-					button.setCaption("Zeige Verbindung");
-				} catch (HibernateException e) {
-					if (tx != null)
-						tx.rollback();
-					e.printStackTrace();
-					Notification.show("Fehler", e.getMessage(), Notification.Type.ERROR_MESSAGE);
-				} finally {
-					session.close();
-				}
-			}
-
-		});
-
-		popupContent.addComponent(devices);
-
-		ComboBox wlan = new ComboBox("W-Lan Verbindungen");
-		// WLAN Popup
-		VerticalLayout popupContentwlan = new VerticalLayout();
-		ComboBox devices_wlan = new ComboBox("Geräte");
-		Session s = DBManager.getFactory().openSession();
-		try {
-			Criteria cr = s.createCriteria(Device.class);
-			cr.add(Restrictions.eq("besitzer", device.getBesitzer()));
-
-			List<Device> devices_list = cr.list();
-			for (Device d : devices_list) {
-				if (!d.equals(device))
-					devices_wlan.addItem(d);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			s.close();
-
-		}
-		PopupView popupwlan = new PopupView(null, popupContentwlan);
-		Button buttonwlan = new Button("", click -> popupwlan.setPopupVisible(true));
-		buttonwlan.setVisible(false);
-		
-		wlan.addValueChangeListener(new ComboBox.ValueChangeListener() {
-
-			@Override
-			public void valueChange(ValueChangeEvent event) {
-				if (event.getProperty().getValue() != null) {
-					buttonwlan.setVisible(true);
-					if(((WLAN)event.getProperty().getValue()).connected()){
-						buttonwlan.setCaption("Zeige Verbindung");
-					}else{
-						buttonwlan.setCaption("Verbinde");
-					}
-				} else {
-					buttonwlan.setVisible(false);
-				}
-
-			}
-
-		});
-		
-		devices_wlan.addValueChangeListener(new ComboBox.ValueChangeListener() {
-
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void valueChange(ValueChangeEvent event) {
-				WLAN connection = (WLAN) wlan.getValue();
-				Transaction tx = null;
-				Session session = DBManager.getFactory().openSession();
-				try {
-					connection.connectWith((Device) event.getProperty().getValue());
-
-					tx = session.beginTransaction();
-					session.update(connection);
-					session.update((Device) event.getProperty().getValue());
-					tx.commit();
-
-					logger.trace(device + " wurde mit " + ((Device) event.getProperty().getValue()).toString()
-							+ " verbunden!");
-					Notification.show("Verbunden", device + " wurde mit "
-							+ ((Device) event.getProperty().getValue()).toString() + " verbunden!",
-							Notification.Type.TRAY_NOTIFICATION);
-					popupwlan.setVisible(false);
-					buttonwlan.setCaption("Zeige Verbindung");
-				} catch (HibernateException e) {
-					if (tx != null)
-						tx.rollback();
-					e.printStackTrace();
-					Notification.show("Fehler", e.getMessage(), Notification.Type.ERROR_MESSAGE);
-				} finally {
-					session.close();
-				}
-			}
-
-		});
-
+		GridLayout layout = new GridLayout(2, device.getConnections().size());
+		int i = 0;
 		for (Connection c : device.getConnections()) {
-			if (c.getClass().equals(LAN.class)) {
-				lan.addItem(c);
-			} else if (c.getClass().equals(WLAN.class)) {
-				wlan.addItem(c);
+			Label name = new Label(c.toString());
+			layout.addComponent(name, 0, i);
+			layout.setComponentAlignment(name, Alignment.MIDDLE_CENTER);
+			ComboBox devices = new ComboBox();
+			Session session = DBManager.getFactory().openSession();
+			try {
+				Criteria cr = session.createCriteria(Device.class);
+				cr.add(Restrictions.eq("besitzer", device.getBesitzer()));
+				List<Device> devices_list = cr.list();
+				for (Device d : devices_list) {
+					if (!d.equals(device))
+						devices.addItem(d);
+					if (c.connectedWidth(d)) {
+						devices.setValue(d);
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				session.close();
 			}
+			devices.addValueChangeListener(new ComboBox.ValueChangeListener() {
+
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void valueChange(ValueChangeEvent event) {
+					if (event.getProperty().getValue() != null) {
+						if (c.getClass().equals(LAN.class)) {
+							LAN connection = (LAN) c;
+							connection.connectWith((Device) event.getProperty().getValue());
+						} else if (c.getClass().equals(WLAN.class)) {
+							WLAN connection = (WLAN) c;
+							connection.connectWith((Device) event.getProperty().getValue());
+						}
+					}else{
+						//Unconnect muss implementiert werden.
+					}
+
+				}
+			});
+			layout.addComponent(devices, 1, i);
+			layout.setComponentAlignment(devices, Alignment.MIDDLE_CENTER);
+			i++;
 		}
 
-		if (lan.getItemIds().size() == 0) {
-			lan.setVisible(false);
-		}
-		if (wlan.getItemIds().size() == 0) {
-			wlan.setVisible(false);
-		}
-
-		popupContentwlan.addComponent(devices_wlan);
-
-		layout.addComponents(popup);
-		layout.addComponents(popupwlan);
-		verbindung.addComponent(lan);
-		verbindung.addComponent(button);
-		verbindung.addComponent(wlan);
-		verbindung.addComponent(buttonwlan);
-
-		accordion.addTab(verbindung, "Verbindung", null);
+		accordion.addTab(layout, "Verbindung", null);
 
 	}
 

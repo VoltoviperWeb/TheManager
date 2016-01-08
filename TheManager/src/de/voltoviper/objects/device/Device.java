@@ -103,11 +103,6 @@ public class Device implements Serializable {
 			s.close();
 		}
 	}
-	/**
-	 * Überprüft, ob das Device mit irgendetwas anderem verbunden ist.
-	 * 
-	 * @return
-	 */
 
 	/**
 	 * Überprüft, ob das Device mit irgendeinem anderen Gerät verbunden ist.
@@ -154,6 +149,19 @@ public class Device implements Serializable {
 
 	}
 
+	
+	public boolean connectedwith(Device device){
+		for(Connection c : connections){
+			for(Device d: c.getDevices()){
+				if(d.equals(device)){
+					return true;
+				}
+			}
+		}
+		
+		return false;
+		
+	}
 	/*
 	 * toString Override
 	 */
@@ -221,5 +229,29 @@ public class Device implements Serializable {
 	public void setStatus(Device_Status status) {
 		this.status = status;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + device_id;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Device other = (Device) obj;
+		if (device_id != other.device_id)
+			return false;
+		return true;
+	}
+	
+	
 
 }
