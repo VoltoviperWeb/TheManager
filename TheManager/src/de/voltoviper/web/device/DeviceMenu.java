@@ -17,14 +17,13 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
-
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 
 import de.voltoviper.objects.benutzer.Kunde;
-import de.voltoviper.objects.device.Connection;
 import de.voltoviper.objects.device.Device;
-import de.voltoviper.objects.device.LAN;
-import de.voltoviper.objects.device.WLAN;
+import de.voltoviper.objects.device.network.Interface;
+import de.voltoviper.objects.device.network.InterfaceException;
 import de.voltoviper.objects.standards.Device_Typ;
 import de.voltoviper.objects.standards.Hersteller;
 import de.voltoviper.web.DBManager;
@@ -72,9 +71,9 @@ public class DeviceMenu extends BorderLayout {
 	 * @author Christoph Nebendahl
 	 */
 	private void initTabVerbindung(Device device) {
-		GridLayout layout = new GridLayout(2, device.getConnections().size());
+		GridLayout layout = new GridLayout(2, device.getInterfaces().size());
 		int i = 0;
-		for (Connection c : device.getConnections()) {
+		for (Interface c : device.getInterfaces()) {
 			Label name = new Label(c.toString());
 			layout.addComponent(name, 0, i);
 			layout.setComponentAlignment(name, Alignment.MIDDLE_CENTER);
@@ -87,8 +86,10 @@ public class DeviceMenu extends BorderLayout {
 				for (Device d : devices_list) {
 					if (!d.equals(device))
 						devices.addItem(d);
-					if (c.connectedWidth(d)) {
-						devices.setValue(d);
+					if (c.getOtherinterface() != null) {
+						if (c.getOtherinterface().getHome().equals(d)) {
+							devices.setValue(d);
+						}
 					}
 				}
 			} catch (Exception e) {
@@ -105,16 +106,18 @@ public class DeviceMenu extends BorderLayout {
 
 				@Override
 				public void valueChange(ValueChangeEvent event) {
+					// TODO muss noch umgebaut werden auf Interfaces
 					if (event.getProperty().getValue() != null) {
-						if (c.getClass().equals(LAN.class)) {
-							LAN connection = (LAN) c;
-							connection.connectWith((Device) event.getProperty().getValue());
-						} else if (c.getClass().equals(WLAN.class)) {
-							WLAN connection = (WLAN) c;
-							connection.connectWith((Device) event.getProperty().getValue());
+						try {
+							c.connectwith((Device)event.getProperty().getValue());
+							
+						} catch (InterfaceException e) {
+							// TODO Auto-generated catch block
+							Notification.show("Fehler beim verbinden", e.getMessage(), Notification.Type.ERROR_MESSAGE);
+							devices.setValue(null);
 						}
-					}else{
-						//Unconnect muss implementiert werden.
+					} else {
+						// Unconnect muss implementiert werden.
 					}
 
 				}

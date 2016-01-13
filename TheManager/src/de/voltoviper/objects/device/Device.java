@@ -14,6 +14,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.apache.log4j.LogManager;
@@ -22,6 +23,9 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import de.voltoviper.objects.benutzer.Kunde;
+import de.voltoviper.objects.device.network.Interface;
+import de.voltoviper.objects.device.network.LanInterface;
+import de.voltoviper.objects.device.network.WlanInterface;
 import de.voltoviper.objects.standards.Device_Status;
 import de.voltoviper.objects.standards.Device_Typ;
 import de.voltoviper.objects.standards.Hersteller;
@@ -53,10 +57,8 @@ public class Device implements Serializable {
 
 	Device_Status status;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinTable(name = "CONN_DEVICE", joinColumns = { @JoinColumn(name = "device_id") }, inverseJoinColumns = {
-			@JoinColumn(name = "conn_id") })
-	Collection<Connection> connections = new ArrayList<>();
+	@OneToMany(mappedBy = "home")
+	Collection<Interface> interfaces = new ArrayList<Interface>();
 
 	public Device() {
 
@@ -68,15 +70,17 @@ public class Device implements Serializable {
 		this.hersteller = hersteller;
 		this.bezeichnung = bezeichnung;
 		this.status = Device_Status.OK;
-
-		for (int i = 0; i < lan; i++) {
-			connections.add(new LAN(this));
-		}
-		for (int i = 0; i < wlan; i++) {
-			connections.add(new WLAN(this));
-		}
-
 		saveDevice(this);
+		for(int i=0;i<lan;i++){
+			interfaces.add(new LanInterface(this, i+1));
+		}
+		
+		for(int i=0;i<wlan;i++){
+			interfaces.add(new WlanInterface(this));
+		}
+		saveDevice(this);
+		
+
 
 	}
 
@@ -93,7 +97,7 @@ public class Device implements Serializable {
 		Transaction tx = null;
 		try {
 			tx = s.beginTransaction();
-			s.save(device);
+			s.saveOrUpdate(device);
 			tx.commit();
 		} catch (Exception e) {
 			if (tx != null)
@@ -104,64 +108,29 @@ public class Device implements Serializable {
 		}
 	}
 
-	/**
-	 * Überprüft, ob das Device mit irgendeinem anderen Gerät verbunden ist.
-	 * 
-	 * @return Gibt einen boolschen Wert zurück, ob eines der Connections
-	 *         verbunden ist.
-	 */
-	public boolean connected() {
-		for (Connection c : connections) {
-			if (c.connected()) {
+	
+	public Interface connected(Interface f) {
+		for (Interface i : interfaces) {
+			if (!i.isconnected()) {
+				if (i.getClass().equals(f.getClass())) {
+					return i;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	public boolean isconnected() {
+		for (Interface i : interfaces) {
+			if (i.isconnected()) {
 				return true;
 			}
+
 		}
 		return false;
 	}
 
-	/**
-	 * Überprüft ob eine Verbindung vorhanden ist, die nicht verbunden ist.
-	 * Diese wird durch die Übergebene ersetzt.
-	 * 
-	 * @param conn
-	 *            Connection, die eingetragen werden soll
-	 * @return Boolscher Wert, ob das eintragen funktioniert hat
-	 * @throws Exception
-	 *             wirft eine Exception mit der Nachricht, dass keine Verbindung
-	 *             ausgetauscht werden kann.
-	 */
-	public boolean unconnected(Connection conn) throws Exception {
-
-		ArrayList<Connection> speicher = new ArrayList<>();
-		for (Connection c : connections) {
-			speicher.add(c);
-		}
-		for (Connection c : speicher) {
-			if (c.getClass().equals(conn.getClass())) {
-				if (!c.connected()) {
-					connections.remove(c);
-					connections.add(conn);
-					return true;
-				}
-			}
-		}
-		throw new Exception("No unconnected Interface");
-
-	}
-
-	
-	public boolean connectedwith(Device device){
-		for(Connection c : connections){
-			for(Device d: c.getDevices()){
-				if(d.equals(device)){
-					return true;
-				}
-			}
-		}
-		
-		return false;
-		
-	}
 	/*
 	 * toString Override
 	 */
@@ -178,12 +147,12 @@ public class Device implements Serializable {
 		return device_id;
 	}
 
-	public Collection<Connection> getConnections() {
-		return connections;
+	public Collection<Interface> getInterfaces() {
+		return interfaces;
 	}
 
-	public void setConnections(Collection<Connection> connections) {
-		this.connections = connections;
+	public void setInterfaces(Collection<Interface> interfaces) {
+		this.interfaces = interfaces;
 	}
 
 	public void setDevice_id(int device_id) {
@@ -251,7 +220,5 @@ public class Device implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
 
 }

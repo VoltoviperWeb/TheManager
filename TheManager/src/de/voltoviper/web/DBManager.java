@@ -5,11 +5,8 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-
-import de.voltoviper.web.login.LoginView;
 
 public class DBManager implements ServletContextListener {
 	/**

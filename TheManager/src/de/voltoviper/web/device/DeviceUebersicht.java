@@ -90,7 +90,7 @@ public class DeviceUebersicht extends BorderLayout implements KundenAuswahlInter
 			int i = 0;
 			for (Device d : devices) {
 				table.setItemCaption(table
-						.addItem(new Object[] { d.getDevice_id(), d.getTyp(), d.getHersteller(), d.connected() }, i),
+						.addItem(new Object[] { d.getDevice_id(), d.getTyp(), d.getHersteller(), d.isconnected() }, i), 
 						String.valueOf(d.getDevice_id()));
 				;
 				i++;

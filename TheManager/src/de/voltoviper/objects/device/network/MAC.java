@@ -1,4 +1,4 @@
-package de.voltoviper.objects.device;
+package de.voltoviper.objects.device.network;
 
 public class MAC {
 	
