@@ -2,6 +2,8 @@ package de.voltoviper.web.device;
 
 import java.util.List;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.vaadin.addon.borderlayout.BorderLayout;
 import org.vaadin.addon.borderlayout.BorderLayout.Constraint;
@@ -37,6 +39,7 @@ public class NeuesDeviceView extends FormLayout implements KundenAuswahlInterfac
 	TextField ssid;
 	PasswordField wlanpasswd1, wlanpasswd2;
 	Button eintragen;
+	private static final Logger logger = LogManager.getLogger(Device.class);
 	/**
 	 * 
 	 */
@@ -100,14 +103,19 @@ public class NeuesDeviceView extends FormLayout implements KundenAuswahlInterfac
 			@Override
 			public void valueChange(com.vaadin.data.Property.ValueChangeEvent event) {
 				try {
-					if (Integer.parseInt(wlan.getValue()) > 0) {
-						wlansender.setEnabled(true);
-					} else {
-						wlansender.setEnabled(false);
+					if (wlan.getValue() != null) {
+						if (Integer.parseInt(wlan.getValue()) > 0) {
+							wlansender.setEnabled(true);
+							logger.trace("W-Lan eingeschaltet");
+						} else {
+							wlansender.setEnabled(false);
+							logger.trace("W-Lan ausgeschaltet");
+						}
 					}
 
 				} catch (Exception e) {
 					Notification.show("Error", "not an Integer", Notification.Type.ERROR_MESSAGE);
+					logger.error("Not an Integer");
 					wlansender.setEnabled(false);
 				}
 			}
@@ -139,6 +147,11 @@ public class NeuesDeviceView extends FormLayout implements KundenAuswahlInterfac
 				ssid.setEnabled((Boolean) event.getProperty().getValue());
 				wlanpasswd1.setEnabled((Boolean) event.getProperty().getValue());
 				wlanpasswd2.setEnabled((Boolean) event.getProperty().getValue());
+				if ((Boolean) event.getProperty().getValue()) {
+					logger.trace("W-Lan als Basistation eingestellt");
+				} else {
+					logger.trace("W-Lan als Clientstation eingestellt");
+				}
 			}
 		});
 

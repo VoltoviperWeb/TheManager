@@ -33,5 +33,13 @@
 			additivity="false">
 			<AppenderRef ref="Console" />
 		</Logger>
+		<Logger name="de.voltoviper.web.device.NeuesDeviceView" level="trace"
+			additivity="false">
+			<AppenderRef ref="Console" />
+		</Logger>
+		<Logger name="de.voltoviper.objects.device.Device" level="trace"
+			additivity="false">
+			<AppenderRef ref="Console" />
+		</Logger>
 	</Loggers>
 </Configuration>
