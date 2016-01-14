@@ -70,6 +70,7 @@ public class DeviceMenu extends BorderLayout {
 	 *            Das Device für den die Verbindungen verwaltet werden sollen
 	 * @author Christoph Nebendahl
 	 */
+	@SuppressWarnings("unchecked")
 	private void initTabVerbindung(Device device) {
 		GridLayout layout = new GridLayout(2, device.getInterfaces().size());
 		int i = 0;
@@ -114,10 +115,17 @@ public class DeviceMenu extends BorderLayout {
 						} catch (InterfaceException e) {
 							// TODO Auto-generated catch block
 							Notification.show("Fehler beim verbinden", e.getMessage(), Notification.Type.ERROR_MESSAGE);
+							logger.error(e.getMessage());
 							devices.setValue(null);
 						}
 					} else {
-						// Unconnect muss implementiert werden.
+						try {
+							c.unconnect();
+						} catch (InterfaceException e) {
+							// TODO Auto-generated catch block
+							Notification.show("Error with unconnect", e.getMessage(), Notification.Type.ERROR_MESSAGE);
+							logger.error(e.getMessage());
+						}
 					}
 
 				}
@@ -131,6 +139,7 @@ public class DeviceMenu extends BorderLayout {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private void initTabAllgemein(Device device) {
 		// TODO Auto-generated method stub
 		Layout allgemeines = new FormLayout();

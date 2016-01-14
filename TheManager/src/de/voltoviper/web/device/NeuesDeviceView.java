@@ -6,13 +6,17 @@ import org.hibernate.Session;
 import org.vaadin.addon.borderlayout.BorderLayout;
 import org.vaadin.addon.borderlayout.BorderLayout.Constraint;
 
+import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.data.Validator;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CheckBox;
 
 import de.voltoviper.objects.benutzer.Kunde;
 import de.voltoviper.objects.device.Device;
@@ -20,6 +24,7 @@ import de.voltoviper.objects.standards.Device_Typ;
 import de.voltoviper.objects.standards.Hersteller;
 import de.voltoviper.web.DBManager;
 import de.voltoviper.web.validatoren.CustomIntegerRangeValidator;
+import de.voltoviper.web.validatoren.CustomPasswordvalidator;
 
 public class NeuesDeviceView extends FormLayout implements KundenAuswahlInterface {
 	Kunde k;
@@ -28,6 +33,9 @@ public class NeuesDeviceView extends FormLayout implements KundenAuswahlInterfac
 	TextField bezeichnung;
 	TextField lan;
 	TextField wlan;
+	CheckBox wlansender;
+	TextField ssid;
+	PasswordField wlanpasswd1, wlanpasswd2;
 	Button eintragen;
 	/**
 	 * 
@@ -38,16 +46,17 @@ public class NeuesDeviceView extends FormLayout implements KundenAuswahlInterfac
 		init(layout);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void init(BorderLayout layout) {
 
 		typ = new ComboBox("Typ");
 		typ.setRequired(true);
-		
-		for(Device_Typ device_typ:Device_Typ.values()){
+
+		for (Device_Typ device_typ : Device_Typ.values()) {
 			typ.addItem(device_typ);
 		}
 		this.addComponent(typ);
-		
+
 		hersteller = new ComboBox("Hersteller");
 		hersteller.setRequired(true);
 		Session session = DBManager.getFactory().openSession();
@@ -62,28 +71,86 @@ public class NeuesDeviceView extends FormLayout implements KundenAuswahlInterfac
 			session.close();
 		}
 		addComponent(hersteller);
-		
+
 		bezeichnung = new TextField("Bezeichnung");
 		bezeichnung.setRequired(true);
 		addComponent(bezeichnung);
-		
+
 		lan = new TextField("Anzahl LAN Schnittstellen");
 		lan.addValidator(new CustomIntegerRangeValidator("Keine gültige Zahl", 0, null));
 		addComponent(lan);
-		
+
 		wlan = new TextField("Anzahl W-LAN Schnittstellen");
 		wlan.addValidator(new CustomIntegerRangeValidator("Keine gültige Zahl", 0, null));
 		addComponent(wlan);
-		
+		wlan.setImmediate(true);
+
+		wlansender = new CheckBox("W-Lan Sender?");
+		addComponent(wlansender);
+		wlansender.setImmediate(true);
+		wlansender.setEnabled(false);
+
+		wlan.addValueChangeListener(new ValueChangeListener() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void valueChange(com.vaadin.data.Property.ValueChangeEvent event) {
+				try {
+					if (Integer.parseInt(wlan.getValue()) > 0) {
+						wlansender.setEnabled(true);
+					} else {
+						wlansender.setEnabled(false);
+					}
+
+				} catch (Exception e) {
+					Notification.show("Error", "not an Integer", Notification.Type.ERROR_MESSAGE);
+					wlansender.setEnabled(false);
+				}
+			}
+		});
+
+		ssid = new TextField("SSID:");
+		addComponent(ssid);
+		ssid.setEnabled(false);
+
+		wlanpasswd1 = new PasswordField("W-Lan Kennwort:");
+		addComponent(wlanpasswd1);
+		wlanpasswd1.setEnabled(false);
+
+		wlanpasswd2 = new PasswordField("W-Lan Kennwort:");
+		addComponent(wlanpasswd2);
+		wlanpasswd2.setEnabled(false);
+		wlanpasswd2.addValidator(new CustomPasswordvalidator("Kennwörter nicht identisch", wlanpasswd1));
+
+		// Action Listener für Wlan Abfragen
+		wlansender.addValueChangeListener(new ValueChangeListener() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void valueChange(com.vaadin.data.Property.ValueChangeEvent event) {
+				ssid.setEnabled((Boolean) event.getProperty().getValue());
+				wlanpasswd1.setEnabled((Boolean) event.getProperty().getValue());
+				wlanpasswd2.setEnabled((Boolean) event.getProperty().getValue());
+			}
+		});
+
 		eintragen = new Button("Eintragen");
 		if (k == null) {
 			eintragen.setEnabled(false);
-		}else{
+		} else {
 			eintragen.setEnabled(true);
 		}
 		eintragen.setIcon(FontAwesome.CHECK);
 		eintragen.addClickListener(new Button.ClickListener() {
-			
+
 			/**
 			 * 
 			 */
@@ -91,17 +158,25 @@ public class NeuesDeviceView extends FormLayout implements KundenAuswahlInterfac
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				Device device = new Device((Device_Typ)typ.getValue(), k, (Hersteller)hersteller.getValue(),Integer.parseInt(lan.getValue()),Integer.parseInt(wlan.getValue()), bezeichnung.getValue());
+				Device device = null;
+				if (!wlansender.getValue()) {
+					device = new Device((Device_Typ) typ.getValue(), k, (Hersteller) hersteller.getValue(),
+							Integer.parseInt(lan.getValue()), Integer.parseInt(wlan.getValue()),
+							bezeichnung.getValue());
+				} else {
+					device = new Device((Device_Typ) typ.getValue(), k, (Hersteller) hersteller.getValue(),
+							Integer.parseInt(lan.getValue()), Integer.parseInt(wlan.getValue()),
+							bezeichnung.getValue());
+				}
 				device.setBezeichnung(bezeichnung.getValue());
 				Notification.show("Gerät hinzugefügt", device.toString(), Notification.Type.TRAY_NOTIFICATION);
 				resetform();
 			}
 
-			
 		});
-		
+
 		this.addComponent(eintragen);
-		
+
 		KundenAuswahlView k_auswahl = new KundenAuswahlView(layout, this);
 		layout.addComponent(k_auswahl, Constraint.EAST);
 	}
@@ -112,9 +187,13 @@ public class NeuesDeviceView extends FormLayout implements KundenAuswahlInterfac
 		bezeichnung.setValue("");
 		lan.setValue("");
 		wlan.setValue("");
-		
+		wlansender.setValue(false);
+		ssid.setValue("");
+		wlanpasswd1.setValue("");
+		wlanpasswd2.setValue("");
+
 	}
-	
+
 	@Override
 	public void setKunde(Kunde k) {
 		this.k = k;

@@ -76,7 +76,7 @@ public class Device implements Serializable {
 		}
 		
 		for(int i=0;i<wlan;i++){
-			interfaces.add(new WlanInterface(this));
+			interfaces.add(new WlanInterface(this, false));
 		}
 		saveDevice(this);
 		
