@@ -64,7 +64,24 @@ public class Device implements Serializable {
 
 	}
 
-	public Device(Device_Typ typ, Kunde besitzer, Hersteller hersteller, int lan, int wlan, String bezeichnung) {
+//	public Device(Device_Typ typ, Kunde besitzer, Hersteller hersteller, int lan, int wlan, String bezeichnung) {
+//		this.typ = typ;
+//		this.besitzer = besitzer;
+//		this.hersteller = hersteller;
+//		this.bezeichnung = bezeichnung;
+//		this.status = Device_Status.OK;
+//		saveDevice(this);
+//		for(int i=0;i<lan;i++){
+//			interfaces.add(new LanInterface(this, i+1));
+//		}
+//		
+//		for(int i=0;i<wlan;i++){
+//			interfaces.add(new WlanInterface(this, false, null));
+//		}
+//		saveDevice(this);
+//	}
+	
+	public Device(Device_Typ typ, Kunde besitzer, Hersteller hersteller, int lan, int wlan, boolean isSender, String ssid, String wlanpasswd, String bezeichnung){
 		this.typ = typ;
 		this.besitzer = besitzer;
 		this.hersteller = hersteller;
@@ -76,12 +93,9 @@ public class Device implements Serializable {
 		}
 		
 		for(int i=0;i<wlan;i++){
-			interfaces.add(new WlanInterface(this, false));
+			interfaces.add(new WlanInterface(this, isSender,ssid, wlanpasswd));
 		}
 		saveDevice(this);
-		
-
-
 	}
 
 	/**

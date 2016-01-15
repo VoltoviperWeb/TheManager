@@ -9,7 +9,6 @@ import org.vaadin.addon.borderlayout.BorderLayout;
 import org.vaadin.addon.borderlayout.BorderLayout.Constraint;
 
 import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.data.Validator;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
@@ -39,7 +38,7 @@ public class NeuesDeviceView extends FormLayout implements KundenAuswahlInterfac
 	TextField ssid;
 	PasswordField wlanpasswd1, wlanpasswd2;
 	Button eintragen;
-	private static final Logger logger = LogManager.getLogger(Device.class);
+	private static final Logger logger = LogManager.getLogger(NeuesDeviceView.class);
 	/**
 	 * 
 	 */
@@ -174,12 +173,12 @@ public class NeuesDeviceView extends FormLayout implements KundenAuswahlInterfac
 				Device device = null;
 				if (!wlansender.getValue()) {
 					device = new Device((Device_Typ) typ.getValue(), k, (Hersteller) hersteller.getValue(),
-							Integer.parseInt(lan.getValue()), Integer.parseInt(wlan.getValue()),
-							bezeichnung.getValue());
+							Integer.parseInt(lan.getValue()), Integer.parseInt(wlan.getValue()), wlansender.getValue(),
+							null, null, bezeichnung.getValue());
 				} else {
 					device = new Device((Device_Typ) typ.getValue(), k, (Hersteller) hersteller.getValue(),
-							Integer.parseInt(lan.getValue()), Integer.parseInt(wlan.getValue()),
-							bezeichnung.getValue());
+							Integer.parseInt(lan.getValue()), Integer.parseInt(wlan.getValue()), wlansender.getValue(),
+							ssid.getValue(), wlanpasswd1.getValue(), bezeichnung.getValue());
 				}
 				device.setBezeichnung(bezeichnung.getValue());
 				Notification.show("Gerät hinzugefügt", device.toString(), Notification.Type.TRAY_NOTIFICATION);

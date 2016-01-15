@@ -60,8 +60,8 @@ public class ThemanagerWEB extends UI {
 			Mitarbeiter mitarbeiter = new Mitarbeiter("user", "test", "Christoph", "Nebendahl", true);
 			Hersteller hersteller = new Hersteller("MSI");
 			Kunde k = new Kunde("Silja", "Ratjhe", "testing@aol.com", "0123456789", false);
-			Device d = new Device(Device_Typ.LAPTOP, k, hersteller, 1,1,"Studienlaptop");
-			Device d1 = new Device(Device_Typ.SWITCH,k, hersteller, 4,0,"Switch Buero");
+			Device d = new Device(Device_Typ.LAPTOP, k, hersteller, 1,1,false, null, null,"Studienlaptop");
+			Device d1 = new Device(Device_Typ.SWITCH,k, hersteller, 4,0,false, null, null,"Switch Buero");
 			logger.trace("standard Objekte wurden erfolgreich eingerichtet");
 		}
 	}
