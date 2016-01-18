@@ -64,14 +64,14 @@ public class Hersteller implements Serializable {
 		saveHersteller(this);
 	}
 
-	private void saveHersteller(Hersteller hersteller) {
+	public void saveHersteller(Hersteller hersteller) {
 		// TODO Auto-generated method stub
 		Session s = DBManager.getFactory().openSession();
 
 		Transaction tx = null;
 		try {
 			tx = s.beginTransaction();
-			s.save(hersteller);
+			s.saveOrUpdate(hersteller);
 			tx.commit();
 		} catch (Exception e) {
 			if (tx != null)
