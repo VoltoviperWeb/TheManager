@@ -16,33 +16,33 @@ import de.voltoviper.web.DBManager;
 
 /**
  * Wlan Interface
+ * 
  * @author Christoph Nebendahl
  *
  */
 @Entity
 @DiscriminatorValue("WLAN")
-public class WlanInterface extends Interface implements Serializable{
+public class WlanInterface extends Interface implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	String SSID, passwd;
 	boolean sender;
-	
+
 	@OneToMany
 	Collection<WlanInterface> clients;
-	
-	
+
 	public WlanInterface(Device device, boolean isSender, String ssid, String wlanpasswd) {
-		this.home=device;
+		this.home = device;
 		this.sender = isSender;
 		this.SSID = ssid;
 		this.passwd = wlanpasswd;
 		this.clients = new ArrayList<WlanInterface>();
 		save();
 	}
-	
-	public WlanInterface(){
+
+	public WlanInterface() {
 
 	}
 
@@ -72,7 +72,7 @@ public class WlanInterface extends Interface implements Serializable{
 
 	@Override
 	public Interface connectwith(Device device) throws InterfaceException {
-		WlanInterface f = (WlanInterface)device.connected(this);
+		WlanInterface f = (WlanInterface) device.connected(this);
 		if (f != null) {
 			f.addClient(this);
 			this.setOtherinterface(f);
@@ -84,21 +84,18 @@ public class WlanInterface extends Interface implements Serializable{
 		return null;
 	}
 
-
 	@Override
 	public boolean isconnected() {
-		if(this.sender){
+		if (this.sender) {
 			return false;
-		}else{
-			if(otherinterface!=null){
+		} else {
+			if (otherinterface != null) {
 				return true;
 			}
 		}
 		return false;
-		
-	
-	}
 
+	}
 
 	@Override
 	public Device getConnectedDevice() throws InterfaceException {
@@ -108,19 +105,20 @@ public class WlanInterface extends Interface implements Serializable{
 			throw new InterfaceException("Interface not connected");
 		}
 	}
-	
+
 	@Override
 	public boolean unconnect() throws InterfaceException {
-		if(this.isSender()){
-			for(WlanInterface wlan : this.clients){
+		if (this.isSender()) {
+			for (WlanInterface wlan : this.clients) {
 				wlan.setOtherinterface(null);
 				wlan.save();
 				this.clients.clear();
 				save();
 			}
-		}else{
+		} else {
 			if (otherinterface != null) {
-				((WlanInterface)otherinterface).removeClient(this);;
+				((WlanInterface) otherinterface).removeClient(this);
+				;
 				((WlanInterface) otherinterface).save();
 				otherinterface = null;
 				save();
@@ -129,16 +127,15 @@ public class WlanInterface extends Interface implements Serializable{
 				throw new InterfaceException("Interface not connected");
 			}
 		}
-		
-		
+
 		return true;
 	}
-	
-	public void addClient(WlanInterface other){
+
+	public void addClient(WlanInterface other) {
 		this.clients.add(other);
 	}
-	
-	public void removeClient(WlanInterface wlan){
+
+	public void removeClient(WlanInterface wlan) {
 		this.clients.remove(wlan);
 	}
 
@@ -166,7 +163,4 @@ public class WlanInterface extends Interface implements Serializable{
 		this.sender = sender;
 	}
 
-	
-	
-	
 }

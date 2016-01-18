@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.vaadin.addon.borderlayout.BorderLayout;
 import org.vaadin.addon.borderlayout.BorderLayout.Constraint;
 
+import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
@@ -100,7 +101,7 @@ public class NeuesDeviceView extends FormLayout implements KundenAuswahlInterfac
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public void valueChange(com.vaadin.data.Property.ValueChangeEvent event) {
+			public void valueChange(Property.ValueChangeEvent event) {
 				try {
 					if (wlan.getValue() != null) {
 						if (Integer.parseInt(wlan.getValue()) > 0) {
@@ -113,8 +114,6 @@ public class NeuesDeviceView extends FormLayout implements KundenAuswahlInterfac
 					}
 
 				} catch (Exception e) {
-					Notification.show("Error", "not an Integer", Notification.Type.ERROR_MESSAGE);
-					logger.error("Not an Integer");
 					wlansender.setEnabled(false);
 				}
 			}
