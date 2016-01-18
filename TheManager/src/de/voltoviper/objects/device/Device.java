@@ -87,7 +87,7 @@ public class Device implements Serializable {
 		this.hersteller = hersteller;
 		this.bezeichnung = bezeichnung;
 		this.status = Device_Status.OK;
-		saveDevice(this);
+		saveDevice();
 		for(int i=0;i<lan;i++){
 			interfaces.add(new LanInterface(this, i+1));
 		}
@@ -95,7 +95,7 @@ public class Device implements Serializable {
 		for(int i=0;i<wlan;i++){
 			interfaces.add(new WlanInterface(this, isSender,ssid, wlanpasswd));
 		}
-		saveDevice(this);
+		saveDevice();
 	}
 
 	/**
@@ -105,13 +105,13 @@ public class Device implements Serializable {
 	 *            Objekt vom Typ Device, dass in der Datenbank gespeichert
 	 *            werden soll.
 	 */
-	private void saveDevice(Device device) {
+	public void saveDevice() {
 		Session s = DBManager.getFactory().openSession();
 
 		Transaction tx = null;
 		try {
 			tx = s.beginTransaction();
-			s.saveOrUpdate(device);
+			s.saveOrUpdate(this);
 			tx.commit();
 		} catch (Exception e) {
 			if (tx != null)

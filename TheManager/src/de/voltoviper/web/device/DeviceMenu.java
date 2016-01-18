@@ -9,9 +9,14 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.vaadin.addon.borderlayout.BorderLayout;
 
+import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Accordion;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.GridLayout;
@@ -191,6 +196,24 @@ public class DeviceMenu extends BorderLayout {
 			s.close();
 		}
 		allgemeines.addComponent(besitzer);
+		
+		Button update = new Button("Update");
+		update.setIcon(FontAwesome.CHECK);
+		update.addClickListener(new Button.ClickListener() {
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				// TODO Auto-generated method stub
+				device.setBezeichnung(bezeichnung.getValue());
+				device.setTyp((Device_Typ)typ.getValue());
+				device.setHersteller((Hersteller)hersteller.getValue());
+				device.setBesitzer((Kunde)besitzer.getValue());
+				device.saveDevice();
+			}
+			
+
+		});
+		allgemeines.addComponent(update);
 
 		accordion.addTab(allgemeines, "Allgemeines", null);
 	}
